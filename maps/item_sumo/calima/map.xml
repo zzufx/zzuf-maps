@@ -1,0 +1,81 @@
+<map proto="1.5.0">
+<name>Calima</name>
+<version>1.0.5</version>
+<unless variant="lifesteal">
+    <objective>Get the highest amount of kills, or stand on the emerald blocks at the center for 20 seconds to win!</objective>
+</unless>
+<if variant="lifesteal">
+    <objective>Eliminate all players, or stand on the emerald blocks at the center for 20 seconds to win! You get extra lives when you get kills!</objective>
+</if>
+<created>2024-01-24</created>
+<maxbuildheight>84</maxbuildheight>
+<include id="item-sumo"/>
+<constants>
+    <constant id="item-spawn-point">0,66.25,0</constant>
+    <constant id="void-plane">50</constant>
+</constants>
+<authors>
+    <author uuid="9d4779a8-d35f-45d2-b51c-95de7a77e128"/> <!-- zzuf -->
+</authors>
+<players max="10" colors="true"/>
+<spawns>
+    <spawn kit="spawn-kit" spread="true">
+        <regions angle="0,70,0">
+            <!-- East -->
+            <point>21.5,69,21.5</point>
+            <point>24.5,69,7.5</point>
+            <point>24.5,69,-7.5</point>
+            <point>21.5,69,-21.5</point>
+            <!-- West -->
+            <point>-21.5,69,-21.5</point>
+            <point>-24.5,69,-7.5</point>
+            <point>-24.5,69,7.5</point>
+            <point>-21.5,69,21.5</point>
+            <!-- North -->
+            <point>7.5,69,-24.5</point>
+            <point>-7.5,69,-24.5</point>
+            <!-- South -->
+            <point>-7.5,69,24.5</point>
+            <point>7.5,69,24.5</point>
+        </regions>
+    </spawn>
+    <default>
+        <region yaw="45">
+            <cylinder base="44,91,-44" height="0" radius="2"/>
+        </region>
+    </default>
+</spawns>
+<filters>
+    <material id="lamp">124</material>
+</filters>
+<regions>
+    <complement id="playable-area">
+        <circle center="0,0" radius="38"/>
+        <region id="spawn-areas"/>
+        <below y="60"/>
+    </complement>
+    <cuboid id="center-region" min="-1,66,-1" max="1,67,1"/>
+    <union id="spawn-areas">
+        <cylinder base="21.5,69,21.5" height="2" radius="0.5"/>
+        <cylinder base="24.5,69,7.5" height="2" radius="0.5"/>
+        <cylinder base="24.5,69,-7.5" height="2" radius="0.5"/>
+        <cylinder base="21.5,69,-21.5" height="2" radius="0.5"/>
+        <cylinder base="-21.5,69,-21.5" height="2" radius="0.5"/>
+        <cylinder base="-24.5,69,-7.5" height="2" radius="0.5"/>
+        <cylinder base="-24.5,69,7.5" height="2" radius="0.5"/>
+        <cylinder base="-21.5,69,21.5" height="2" radius="0.5"/>
+        <cylinder base="7.5,69,-24.5" height="2" radius="0.5"/>
+        <cylinder base="-7.5,69,-24.5" height="2" radius="0.5"/>
+        <cylinder base="-7.5,69,24.5" height="2" radius="0.5"/>
+        <cylinder base="7.5,69,24.5" height="2" radius="0.5"/>
+    </union>
+    <apply leave="never">
+        <region>
+            <negative>
+                <circle center="44,-44" radius="14"/>
+            </negative>
+        </region>
+    </apply>
+    <apply block-physics="deny(lamp)"/>
+</regions>
+</map>
