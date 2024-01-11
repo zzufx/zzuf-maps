@@ -1,0 +1,315 @@
+<map>
+<!--
+      \
+      |\
+    >-|-|->
+      |/
+      /
+-->
+<!-- One in the Quiver gamemode include file -->
+<!-- Created by zzuf -->
+<!-- Version 2025.05.26-1 -->
+<constants fallback="true">
+    <constant id="time-limit">3</constant> <!-- Time limit in minutes -->
+    <constant id="base-kit">default-players-kit</constant> <!-- The base kit that all classes will have -->
+    <constant id="extra-kit">default-extra-kit</constant> <!-- For small additions to the base kit, useful if you just want to add stuff to the default one -->
+</constants>
+<game>One in the Quiver</game>
+<modifybowprojectile pickup-filter="never">
+    <if min-server-version="1.9">
+        <potion>glowing</potion>
+    </if>
+</modifybowprojectile>
+<rage/>
+<time result="score">${time-limit}m</time>
+<respawn auto="true"/>
+<score>
+    <kills>1</kills>
+</score>
+<broadcasts>
+    <alert after="1s" every="1m">`7Swords `c`ldo not `7kill in one hit, but bow shots `a`ldo`7!`r</alert>
+    <tip after="2s" every="1m">`7You can tap your jump key twice to use your `fdouble jumps`7! Time them carefully to quickly move around!`r</tip>
+</broadcasts>
+<kits>
+    <kit id="default-players-kit">
+        <effect duration="1s" amplifier="255" ambient="true">damage resistance</effect>
+        <double-jump power="2" recharge-time="0.5s" recharge-before-landing="true"/>
+        <game-mode>adventure</game-mode>
+        <action>
+            <kit id="${extra-kit}"/>
+        </action>
+    </kit>
+    <kit id="default-extra-kit">
+        <item slot="9" material="air"/>
+    </kit>
+    <kit id="obs-kit">
+        <book show-other="false">
+            <title>`e`lHow to Play</title>
+            <author>zzuf</author>
+            <pages>
+                <page>
+                    `2» `lONE IN THE
+                    `2`lQUIVER`0
+                    
+                    Swords `cdon't`0 kill in one
+                    hit, but bow shots `2do`0!
+                    
+                    Time your `7double
+                    `7jumps`0 carefully to
+                    `ochain`0 them!
+                    
+                    Play using one of
+                    many available classes!
+                </page>
+            </pages>
+        </book>
+    </kit>
+    <give kit="obs-kit" filter="is-observer"/>
+</kits>
+<classes family="oitq">
+    <class name="Archer" description="Stone sword! Bow and arrow!" longdescription="Stone sword, insta-kill bow and double jumps!" icon="bow" default="true">
+        <kit parents="${base-kit}">
+            <item slot="0" unbreakable="true" name="`7`lRegular `fBowie Knife`r" lore="`8Multiple Hit Kill" material="stone sword"/>
+            <item slot="1" unbreakable="true" name="`c`lMo`6`ldd`e`led `fRepeater`r" lore="`8One Hit Kill" enchantment="power:10" show-enchantments="false" material="bow"/>
+            <item slot="2" material="arrow"/>
+        </kit>
+    </class>
+    <class name="Brawler" description="Iron sword! No bow!" longdescription="Iron sword! No bow! Double jumps!" icon="potion:9">
+        <kit parents="${base-kit}">
+            <item slot="0" unbreakable="true" name="`c`lSharpened `fBowie Knife`r" lore="`8Multiple Hit Kill" material="iron sword"/>
+        </kit>
+    </class>
+    <class name="Speedster" description="Wooden sword! Speed! No bow!" longdescription="Wooden sword! Speed! No bow! Double jumps!" icon="potion:2">
+        <kit parents="${base-kit}">
+            <item slot="0" unbreakable="true" name="`c`lSharpened `fStick`r" lore="`8Multiple Hit Kill" material="wood sword"/>
+            <effect duration="oo" ambient="true">speed</effect>
+        </kit>
+    </class>
+    <class name="Fisker" description="Wooden sword! Fishing rod! No bow!" longdescription="Wooden sword! Fishing rod! No bow! Double jumps!" icon="fishing rod">
+        <kit parents="${base-kit}">
+            <item slot="0" unbreakable="true" name="`c`lSharpened `fStick`r" lore="`8Multiple Hit Kill" material="wood sword"/>
+            <item slot="1" name="`a`lKool Stik Global Elite`r" material="fishing rod" damage="24">
+                <attribute operation="add" amount="-2">generic.attackDamage</attribute>
+            </item>
+        </kit>
+    </class>
+    <class name="Phoenix" description="Blaze rod! Strength! No bow!" longdescription="Fire stick! Strength! No bow! Double jumps!" icon="blaze rod">
+        <kit parents="${base-kit}">
+            <item slot="0" name="`6`lFire `fStick`r" lore="`8Multiple Hit Kill" material="blaze rod" enchantment="fire aspect:1"/>
+            <effect duration="oo" ambient="true">strength</effect>
+        </kit>
+    </class>
+    <if min-server-version="1.14">
+        <class name="Golden Claw" description="Wooden sword! Crossbow!" longdescription="Wooden sword, insta-kill crossbow and double jumps!" icon="crossbow">
+            <kit parents="${base-kit}">
+                <item slot="0" unbreakable="true" name="`c`lSharpened `fStick`r" lore="`8Multiple Hit Kill" material="wood sword"/>
+                <item slot="1" unbreakable="true" name="`e`lHand-crafted `fCrossbow`r" lore="`8One Hit Kill" enchantment="power:10;quick charge:1;vanishing curse" show-enchantments="false" material="crossbow"/>
+                <item slot="2" material="arrow"/>
+            </kit>
+        </class>
+    </if>
+    <if min-server-version="1.21">
+        <class name="Wind-and-fire Wheels" description="Wind charges! No Bow!" longdescription="Wind-and-fire wheels and double jumps!" icon="wind charge">
+            <kit parents="${base-kit}">
+                <item slot="slot.weapon.offhand" name="`c`lFire `fWheel`r" lore="`8Multiple Hit Kill" enchantment="vanishing curse" show-enchantments="false" material="blaze powder"/>
+                <item slot="0" name="`9`lWind `fWheel`r" lore="`8One Hit Kill" enchantment="vanishing curse" show-enchantments="false" material="wind charge" projectile="wind-wheel"/>
+                <effect duration="oo" amplifier="2" ambient="true">strength</effect>
+            </kit>
+        </class>
+    </if>
+</classes>
+<if min-server-version="1.21">
+    <projectiles>
+        <projectile id="wind-wheel" name="Wind Wheel" projectile="WindCharge" click="right" damage="255" throwable="true" cooldown="5s" velocity="12"/>
+    </projectiles>
+</if>
+<filters>
+    <deny id="deny-players">
+        <participating/>
+    </deny>
+    <observing id="is-observer"/>
+</filters>
+<regions>
+    <apply block="deny-players"/>
+</regions>
+<actions>
+    <action id="killstreak-sound" scope="player">
+        <sound key="${entity.ender_dragon.growl}" volume="1" pitch="0.8"/>
+    </action>
+</actions>
+<variables>
+    <variable id="killstreaker" scope="player" exclusive="1"/>
+</variables>
+<kill-rewards>
+    <kill-reward>
+        <filter>
+            <any>
+                <class>Archer</class>
+                <if min-server-version="1.14">
+                    <class>Golden Claw</class>
+                </if>
+            </any>
+        </filter>
+        <item amount="1" material="arrow"/>
+    </kill-reward>
+    <if min-server-version="1.21">
+        <kill-reward>
+            <filter>
+                <class>Wind-and-fire Wheels</class>
+            </filter>
+            <item name="`9`lWind `fWheel`r" lore="`8One Hit Kill" enchantment="vanishing curse" show-enchantments="false" material="wind charge" projectile="wind-wheel"/>
+        </kill-reward>
+    </if>
+    <!-- Kill streaks -->
+    <kill-reward>
+        <filter>
+            <kill-streak count="3" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <set var="killstreaker" value="1"/>
+                <switch-scope outer="player" inner="match">
+                    <message text=" `b`l» `r{player} `7got a `b`lHAT TRICK`7! `f(3 kills)">
+                        <replacements>
+                            <player id="player" var="killstreaker"/>
+                        </replacements>
+                    </message>
+                </switch-scope>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="5" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <set var="killstreaker" value="1"/>
+                <switch-scope outer="player" inner="match">
+                    <message text=" `a`l» `r{player} `7is on a `a`lKILLING SPREE`7! `f(5 kills)">
+                        <replacements>
+                            <player id="player" var="killstreaker"/>
+                        </replacements>
+                    </message>
+                </switch-scope>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="8" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <set var="killstreaker" value="1"/>
+                <switch-scope outer="player" inner="match">
+                    <message text=" `e`l» `r{player} `7is on a `e`lRAMPAGE`7! `f(8 kills)">
+                        <replacements>
+                            <player id="player" var="killstreaker"/>
+                        </replacements>
+                    </message>
+                </switch-scope>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="12" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <set var="killstreaker" value="1"/>
+                <switch-scope outer="player" inner="match">
+                    <message text=" `6`l» `r{player} `7is `6`lDOMINATING`7! `f(12 kills)">
+                        <replacements>
+                            <player id="player" var="killstreaker"/>
+                        </replacements>
+                    </message>
+                </switch-scope>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="15" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <set var="killstreaker" value="1"/>
+                <switch-scope outer="player" inner="match">
+                    <message text=" `c`l» `r{player} `7is `c`lUNSTOPPABLE`7! `f(15 kills)">
+                        <replacements>
+                            <player id="player" var="killstreaker"/>
+                        </replacements>
+                    </message>
+                </switch-scope>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="22" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <set var="killstreaker" value="1"/>
+                <switch-scope outer="player" inner="match">
+                    <message text=" `4`l» `r{player} `7is `4`lGODLIKE`7! `f(22 kills)">
+                        <replacements>
+                            <player id="player" var="killstreaker"/>
+                        </replacements>
+                    </message>
+                </switch-scope>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="30" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <set var="killstreaker" value="1"/>
+                <switch-scope outer="player" inner="match">
+                    <message text=" `0`l» `r{player} `7is `0`l`kzzuf`7! `f(30 kills)">
+                        <replacements>
+                            <player id="player" var="killstreaker"/>
+                        </replacements>
+                    </message>
+                </switch-scope>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+</kill-rewards>
+<itemremove>
+    <item>stone sword</item>
+    <item>iron sword</item>
+    <item>wood sword</item>
+    <item>bow</item>
+    <item>arrow</item>
+    <item>bone</item>
+    <item>rotten flesh</item>
+    <item>fishing rod</item>
+    <item>blaze rod</item>
+    <if min-server-version="1.14">
+        <item>crossbow</item>
+    </if>
+    <if min-server-version="1.21">
+        <item>blaze powder</item>
+        <item>wind charge</item>
+    </if>
+</itemremove>
+<disabledamage>
+    <damage>fall</damage>
+</disabledamage>
+<hunger>
+    <depletion>off</depletion>
+</hunger>
+</map>

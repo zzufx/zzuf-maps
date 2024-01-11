@@ -1,0 +1,131 @@
+<map proto="1.5.0">
+<name>Sagujo</name>
+<version>1.0.8</version>
+<include id="oitq"/>
+<constants>
+    <constant id="base-kit">sagujo-kit</constant>
+</constants>
+<objective>Eliminate the other teams before the ${time-limit} minutes are up!</objective>
+<authors>
+    <author uuid="9d4779a8-d35f-45d2-b51c-95de7a77e128" contribution="Map builder, XML"/> <!-- zzuf -->
+</authors>
+<created>2022-09-27</created>
+<game>OITQ and Blitz</game>
+<blitz/>
+<teams>
+    <team id="green" color="green" max="8" max-overfill="12">Green</team>
+    <team id="blue" color="blue" max="8" max-overfill="12">Blue</team>
+    <team id="yellow" color="yellow" max="8" max-overfill="12">Yellow</team>
+    <team id="red" color="red" max="8" max-overfill="12">Red</team>
+</teams>
+<spawns>
+    <spawn team="green" yaw="45">
+        <regions>
+            <cuboid min="-28.5,9,29.5" max="-26.5,9,27.5"/>
+        </regions>
+    </spawn>
+    <spawn team="blue" yaw="-45">
+        <regions>
+            <cuboid min="29.5,9,29.5" max="27.5,9,27.5"/>
+        </regions>
+    </spawn>
+    <spawn team="yellow" yaw="135">
+        <regions>
+            <cuboid min="-28.5,9,-28.5" max="-26.5,9,-26.5"/>
+        </regions>
+    </spawn>
+    <spawn team="red" yaw="-135">
+        <regions>
+            <cuboid min="29.5,9,-28.5" max="27.5,9,-26.5"/>
+        </regions>
+    </spawn>
+    <default yaw="90">
+        <regions>
+            <cylinder base="0.5,40,0.5" height="0" radius="1"/>
+        </regions>
+    </default>
+</spawns>
+<kits>
+    <kit id="sagujo-kit">
+        <effect amplifier="1" ambient="false">jump_boost</effect>
+        <effect duration="1s" amplifier="255" ambient="true">damage resistance</effect>
+        <double-jump power="3" recharge-time="1s" recharge-before-landing="true"/>
+        <helmet team-color="true" unbreakable="true" locked="true" material="leather helmet"/>
+        <game-mode>adventure</game-mode>
+    </kit>
+    <give>
+        <kit id="sneaking-kit">
+            <effect duration="1" ambient="true">instant damage</effect>
+            <effect amplifier="6" ambient="true">wither</effect>
+        </kit>
+        <filter>
+            <after duration="5s">
+                <crouching/>
+            </after>
+        </filter>
+    </give>
+    <give>
+        <kit id="clear-sneaking-kit" force="true">
+            <effect duration="0" amplifier="1" ambient="true">wither</effect>
+        </kit>
+        <filter>
+            <not>
+                <crouching/>
+            </not>
+        </filter>
+    </give>
+</kits>
+<regions>
+    <above y="27" id="ceiling"/>
+    <apply enter="never" region="ceiling"/>
+    <apply block="never" use="never"/>
+</regions>
+<portals>
+    <portal x="@-34.5" y="@18" z="@35.5" yaw="@-135">
+        <region>
+            <cuboid min="-37,9,29" max="-38,11,31"/> <!-- green west portal -->
+        </region>
+    </portal>
+    <portal x="@-34.5" y="@18" z="@35.5" yaw="@-135">
+        <region>
+            <cuboid min="-30,9,38" max="-28,11,39"/> <!-- green south portal -->
+        </region>
+    </portal>
+    <portal x="@-34.5" y="@18" z="@-34.5" yaw="@-45">
+        <region>
+            <cuboid min="-37,9,-30" max="-38,11,-28"/> <!-- yellow west portal -->
+        </region>
+    </portal>
+    <portal x="@-34.5" y="@18" z="@-34.5" yaw="@-45">
+        <region>
+            <cuboid min="-28,9,-37" max="-30,11,-38"/> <!-- yellow north portal -->
+        </region>
+    </portal>
+    <portal x="@35.5" y="@18" z="@-34.5" yaw="@45">
+        <region>
+            <cuboid min="31,9,-37" max="29,11,-38"/> <!-- red north portal -->
+        </region>
+    </portal>
+    <portal x="@35.5" y="@18" z="@-34.5" yaw="@45">
+        <region>
+            <cuboid min="38,9,-28" max="39,11,-30"/> <!-- red east portal -->
+        </region>
+    </portal>
+    <portal x="@35.5" y="@18" z="@35.5" yaw="@135">
+        <region>
+            <cuboid min="29,9,38" max="31,11,39"/> <!-- blue south portal -->
+        </region>
+    </portal>
+    <portal x="@35.5" y="@18" z="@35.5" yaw="@135">
+        <region>
+            <cuboid min="38,9,31" max="39,11,29"/> <!-- blue east portal -->
+        </region>
+    </portal>
+</portals>
+<hunger>
+    <depletion>off</depletion>
+</hunger>
+<disabledamage>
+    <damage>fall</damage>
+</disabledamage>
+</map>

@@ -1,0 +1,694 @@
+<map>
+<!--
+█ ▀█▀ █▀▀ █▀▄▀█   █▀ █░█ █▀▄▀█ █▀█
+█ ░█░ ██▄ █░▀░█   ▄█ █▄█ █░▀░█ █▄█
+-->
+<!-- Item Sumo gamemode include file -->
+<!-- Contains two versions: score-based Item Sumo (non-Blitz) and life-based Item Sumo (Blitz) -->
+<!-- Created by zzuf (GitHub @zzufx) -->
+<!-- Version 2025.07.18-1 -->
+<include id="void-death"/>
+<variant id="lifesteal">Lifesteal</variant>
+<variant id="scaffolding" min-server-version="1.21">Scaffolding</variant>
+<variant id="scaffolding-lifesteal" min-server-version="1.21">Scaffolding: Lifesteal</variant>
+<constants>
+    <!-- Match -->
+    <constant id="void-plane">-10</constant>
+    <constant id="time-limit">4m</constant>
+    <!-- Items -->
+    <constant id="item-spawn-point">0,0,0</constant>
+    <constant id="item-spawn-rate">29.75s</constant>
+    <constant id="global-power-up-rate">19.75s</constant>
+    <constant id="enable-helmets">1</constant>
+    <if max-server-version="1.20">
+        <constant id="game-block">wool</constant>
+    </if>
+    <if min-server-version="1.21">
+        <unless variant="scaffolding,scaffolding-lifesteal">
+            <constant id="game-block">wool</constant>
+        </unless>
+        <if variant="scaffolding,scaffolding-lifesteal">
+            <constant id="game-block">scaffolding</constant>
+        </if>
+    </if>
+    <!-- Hill -->
+    <constant id="hill-name">Center</constant>
+    <constant id="hill-capture-time">20s</constant>
+    <constant id="hill-capture-message">19s</constant> <!-- hill-capture-time minus 1 second -->
+    <constant id="hill-points">0</constant>
+    <constant id="hill-block-on">emerald block</constant>
+    <constant id="hill-block-off">coal block</constant>
+    <!-- void-death include -->
+    <constant id="affect-obs">always</constant>
+    <!-- Lifesteal variant -->
+    <constant id="initial-lives">3</constant>
+</constants>
+<broadcasts>
+    <unless variant="lifesteal,scaffolding-lifesteal">
+        <alert after="1m6s" every="1m" filter="joined-for-20s">`3Get the most amount of `ckills`3, or `acapture the hill`3 at the center of the map to win!</alert>
+        <alert after="1m7s" every="1m" filter="joined-for-20s">`3You get `fmore`3 points based on your `ckill streak`3!</alert>
+    </unless>
+    <if variant="lifesteal,scaffolding-lifesteal">
+        <alert after="6s" every="1m10s">`3Be the `flast`3 player standing, or `acapture the hill`3 at the center of the map to instantly win!</alert>
+    </if>
+</broadcasts>
+<respawn delay="3s" auto="true"/>
+<if variant="lifesteal,scaffolding-lifesteal">
+    <phase>staging</phase>
+    <include id="lifesteal"/>
+    <constants>
+        <!-- Lifesteal include constants -->
+        <constant id="max-lives">5</constant>
+        <constant id="max-lives-enabled">1</constant>
+        <constant id="total-lives">99</constant>
+        <constant id="tutorial-word2">lives</constant>
+        <constant id="show-lifesteal-tutorial">0</constant>
+    </constants>
+    <blitz>
+        <lives>${initial-lives}</lives>
+        <broadcastLives>true</broadcastLives>
+    </blitz>
+    <game>IS and Lifesteal</game>
+</if>
+<unless variant="lifesteal,scaffolding-lifesteal">
+    <game>Item Sumo</game>
+    <time>${time-limit}</time>
+    <score/>
+</unless>
+<kits>
+    <kit id="spawn-kit" reset-ender-pearls="true">
+        <clear/>
+        <item slot="0" amount="64" team-color="true" material="${game-block}"/>
+        <item slot="8" unbreakable="true" material="shears"/>
+        <helmet locked="true" unbreakable="true" team-color="true" material="leather helmet"/>
+        <chestplate unbreakable="true" team-color="true" material="leather chestplate"/>
+        <effect amplifier="255">resistance</effect>
+    </kit>
+    <kit id="wool-kit" force="true">
+        <item amount="32" team-color="true" material="${game-block}"/> <!-- amount="oo" behaves weirdly with higher ping -->
+    </kit>
+    <give kit="wool-kit" filter="give-blocks"/>
+    <!-- Global Power-Ups -->
+    <kit id="pw-tnt">
+        <item material="tnt"/>
+    </kit>
+    <kit id="pw-sb">
+        <!-- TODO: remove when snowballs work in modern versions -->
+        <if max-server-version="1.20">
+            <item amount="5" material="snowball"/>
+        </if>
+        <if min-server-version="1.21">
+            <item amount="3" material="wind charge"/>
+        </if>
+    </kit>
+    <kit id="pw-fb">
+        <item material="fireball" projectile="fireball-projectile"/>
+    </kit>
+    <!-- TODO: re-enable when snowballs work in modern versions
+    <if min-server-version="1.21">
+        <kit id="pw-wc">
+            <item amount="3" material="wind charge"/>
+        </kit>
+        <give kit="pw-wc" filter="all(base-pulse,next_global_powerup=3)"/>
+    </if>
+    -->
+    <give kit="pw-tnt" filter="all(base-pulse,next_global_powerup=0)"/>
+    <give kit="pw-sb" filter="all(base-pulse,next_global_powerup=1)"/>
+    <give kit="pw-fb" filter="all(base-pulse,next_global_powerup=2)"/>
+    <kit id="adventure-kit">
+        <game-mode>adventure</game-mode>
+    </kit>
+    <kit id="survival-kit">
+        <game-mode>survival</game-mode>
+    </kit>
+    <give kit="survival-kit" filter="all(playable-area,participating)"/>
+    <give kit="adventure-kit" filter="all(not(playable-area),participating)"/>
+    <unless variant="lifesteal">
+        <kit id="kill-streak-1-kit" force="true">
+            <helmet locked="true" unbreakable="true" team-color="true" material="chainmail helmet"/>
+        </kit>
+        <kit id="kill-streak-2-kit" force="true">
+            <helmet locked="true" unbreakable="true" material="iron helmet"/>
+        </kit>
+        <kit id="kill-streak-3-kit" force="true">
+            <helmet locked="true" unbreakable="true" material="gold helmet"/>
+        </kit>
+        <kit id="kill-streak-4-kit" force="true">
+            <helmet locked="true" unbreakable="true" material="diamond helmet"/>
+        </kit>
+        <kit id="kill-streak-5-kit" force="true">
+            <helmet locked="true" material="emerald block"/>
+            <action>
+                <set var="times_emerald" value="times_emerald+1"/>
+            </action>
+        </kit>
+        <give kit="kill-streak-1-kit" filter="all(participating,helmets_enabled=1,kill_streak=1)"/>
+        <give kit="kill-streak-2-kit" filter="all(participating,helmets_enabled=1,kill_streak=2)"/>
+        <give kit="kill-streak-3-kit" filter="all(participating,helmets_enabled=1,kill_streak=3)"/>
+        <give kit="kill-streak-4-kit" filter="all(participating,helmets_enabled=1,kill_streak=4)"/>
+        <give kit="kill-streak-5-kit" filter="all(participating,helmets_enabled=1,kill_streak=5..)"/>
+    </unless>
+    <unless variant="lifesteal,scaffolding-lifesteal">
+        <kit id="obs-kit">
+            <book show-other="false">
+                <title>`e`lHow to Play</title>
+                <author>zzuf</author>
+                <pages>
+                    <page>
+                        `2» `lITEM SUMO
+                        `2» gamemode`0
+                        
+                        Be the player with the
+                        most points, or capture
+                        a hill by standing on
+                        it for `6${hill-capture-time}`0 to instantly
+                        win!
+                        
+                        Kill Streaks are
+                        displayed via helmet
+                        changes, and give
+                        more points!
+                    </page>
+                </pages>
+            </book>
+        </kit>
+        <give kit="obs-kit" filter="any(observing,dead)"/>
+    </unless>
+    <if variant="lifesteal,scaffolding-lifesteal">
+        <kit id="obs-kit-ls">
+            <book show-other="false">
+                <title>`e`lHow to Play</title>
+                <author>zzuf</author>
+                <pages>
+                    <page>
+                        `2» `lITEM SUMO
+                        `2» `o(Lifesteal)`0
+                        
+                        Eliminate all the other
+                        players, or capture a
+                        hill by standing on it
+                        for `6${hill-capture-time}`0 to
+                        instantly win!
+                        
+                        Get lives by killing
+                        enemies!
+                    </page>
+                </pages>
+            </book>
+        </kit>
+        <give kit="obs-kit-ls" filter="any(observing,dead)"/>
+    </if>
+</kits>
+<actions>
+    <trigger filter="match-idle" scope="match">
+        <action id="settings-button" scope="match" expose="true">
+            <message>
+                <text>{"text":"[Settings]","color":"dark_gray","clickEvent":{"action":"run_command","value":"/action trigger settings-menu"},"hoverEvent":{"action":"show_text","value":"View Item Sumo settings"}}</text>
+            </message>
+        </action>
+    </trigger>
+    <action id="settings-menu" scope="player" expose="true">
+        <message>
+            <text>{"text":"» ","color":"dark_green","extra":[{"text":"ITEM SUMO","bold":true,"color":"dark_green"},{"text":" settings:","color":"dark_green"}]}</text>
+        </message>
+        <action id="settings-menu2"/>
+    </action>
+    <action id="settings-menu2" scope="player">
+        <message>
+            <text>{"text":"· Hill capturing ","color":"white","extra":[{"text":"[Yes]","color":"green","clickEvent":{"action":"run_command","value":"/variable set hill_disabled 0"},"hoverEvent":{"action":"show_text","value":"Click here to enable this feature"}},{"text":" ","color":"white"},{"text":"[No]","color":"red","clickEvent":{"action":"run_command","value":"/variable set hill_disabled 1"},"hoverEvent":{"action":"show_text","value":"Click here to disable this feature"}}]}</text>
+        </message>
+    </action>
+</actions>
+<filters>
+    <after id="joined-for-20s" duration="20s">
+        <not id="just-joined">
+            <observing/>
+        </not>
+    </after>
+    <all id="base-pulse">
+        <filter id="power-up-pulse"/>
+        <participating/>
+        <alive/>
+    </all>
+    <all id="give-blocks">
+        <match-running/>
+        <participating/>
+        <alive/>
+        <not>
+            <carrying ignore-metadata="true" amount="[32,oo)"><item material="${game-block}"/></carrying>
+        </not>
+    </all>
+    <any id="only-some">
+        <material>${game-block}</material>
+        <material>fire</material>
+        <material>tnt</material>
+    </any>
+    <pulse id="power-up-pulse" duration="0.25s" period="${global-power-up-rate}">
+        <after duration="0.25s">
+            <after duration="${global-power-up-rate}">
+                <match-running/>
+            </after>
+        </after>
+    </pulse>
+    <pulse id="after-pulse" duration="0.25s" period="${global-power-up-rate}">
+        <after duration="2.25s">
+            <all>
+                <time>${global-power-up-rate}</time>
+                <match-running/>
+            </all>
+        </after>
+    </pulse>
+    <!-- OP items -->
+    <pulse id="op-pulse" duration="0.25s" period="${item-spawn-rate}">
+        <after duration="0.25s">
+            <after duration="${item-spawn-rate}">
+                <match-running/>
+            </after>
+        </after>
+    </pulse>
+    <pulse id="after-op-pulse" duration="0.25s" period="${item-spawn-rate}">
+        <after duration="2s">
+            <all>
+                <time>${item-spawn-rate}</time>
+                <match-running/>
+            </all>
+        </after>
+    </pulse>
+    <!-- Other -->
+    <countdown duration="${hill-capture-message}" message="`fA player is `ccapturing`f the `a${hill-name}`f hill! `b{0} left">
+        <all>
+            <not>
+                <completed>default-hill</completed>
+            </not>
+            <filter id="hill_disabled=0"/>
+            <after duration="1s">
+                <players min="1" max="1">
+                    <region id="center-region"/>
+                </players>
+            </after>
+        </all>
+    </countdown>
+    <material id="only-hill-block-on">${hill-block-on}</material>
+    <material id="only-hill-block-off">${hill-block-off}</material>
+</filters>
+<projectiles>
+    <projectile id="fireball-projectile" name="Fireball" projectile="Fireball" click="right" damage="10" power="4" throwable="true" cooldown="1s"/>
+</projectiles>
+<variables>
+    <variable id="next_global_powerup" default="0" scope="match"/>
+    <!--
+    0: tnt
+    1: snowball/wind charge
+    2: fireball
+    3: wind charge
+    -->
+    <variable id="op_item" default="0" scope="match"/>
+    <variable id="times_emerald" default="0" scope="player"/>
+    <unless variant="lifesteal">
+        <variable id="kill_streak" default="0" scope="player"/>
+        <score id="player_score"/>
+    </unless>
+    <variable id="hill_disabled" default="0" scope="match"/>
+    <variable id="hill_previously_disabled" default="0" scope="match"/>
+    <variable id="killstreaker" scope="player" exclusive="1"/> <!-- from oitq.xml -->
+    <variable id="helmets_enabled" default="${enable-helmets}" scope="player"/>
+</variables>
+<regions>
+    <negative id="not-playable-area">
+        <region id="playable-area"/>
+    </negative>
+    <apply block="only-some" region="playable-area"/>
+    <apply block="never" region="not-playable-area"/>
+    <point id="item-spawn">${item-spawn-point}</point>
+    <union id="center-blocks">
+        <translate offset="0,-1,0"><region id="center-region"/></translate>
+        <translate offset="0,-2,0"><region id="center-region"/></translate>
+    </union>
+    <apply enter="never" region="center-blocks"/>
+</regions>
+<actions>
+    <unless variant="lifesteal,scaffolding-lifesteal">
+        <trigger scope="player" filter="just-joined">
+            <action>
+                <sound preset="alert"/>
+                <message text=" `e⚠ `3Get the most amount of `ckills`3, or `acapture the hill`3 at the center of the map to win!"/>
+                <message text=" `e⚠ `3You get `fmore`3 points based on your `ckill streak`3!"/>
+                <action filter="hill_disabled=1">
+                    <message text=" `e⚠ `cHill capturing has been disabled for this match!"/>
+                </action>
+            </action>
+        </trigger>
+        <trigger scope="player">
+            <filter>
+                <any>
+                    <dead/>
+                    <observing/>
+                </any>
+            </filter>
+            <action>
+                <set var="kill_streak" value="0"/>
+            </action>
+        </trigger>
+    </unless>
+    <trigger scope="player">
+        <filter>
+            <carrying ignore-metadata="true"><item material="wood"/></carrying>
+        </filter>
+        <action>
+            <replace-item ignore-metadata="true">
+                <find>wood</find>
+                <replace>air</replace>
+            </replace-item>
+            <kit>
+                <item material="boat" name="`fBoat Clutcher" lore="`7PGM Star"/>
+            </kit>
+        </action>
+    </trigger>
+    <!-- OP -->
+    <action id="set-random-item" scope="match">
+        <set var="op_item" value="floor(random() * 5)"/>
+    </action>
+    <trigger scope="match" action="set-random-item">
+        <filter>
+            <match-started/>
+        </filter>
+    </trigger>
+    <trigger scope="match" filter="after-op-pulse" action="set-random-item"/>
+    <!-- Global Power-Ups -->
+    <trigger scope="match" filter="after-pulse">
+        <action>
+            <set var="next_global_powerup" value="next_global_powerup+1"/>
+        </action>
+    </trigger>
+    <trigger scope="match" filter="all(after-pulse,next_global_powerup=3)">
+        <action>
+            <set var="next_global_powerup" value="0"/>
+        </action>
+    </trigger>
+    <!-- TODO: re-enable when snowballs work in modern versions
+    <if max-server-version="1.20">
+        <trigger scope="match" filter="all(after-pulse,next_global_powerup=3)">
+            <action>
+                <set var="next_global_powerup" value="0"/>
+            </action>
+        </trigger>
+    </if>
+    <if min-server-version="1.21">
+        <trigger scope="match" filter="all(after-pulse,next_global_powerup=4)">
+            <action>
+                <set var="next_global_powerup" value="0"/>
+            </action>
+        </trigger>
+    </if>
+    -->
+    <!-- Messages -->
+    <trigger scope="match" filter="all(power-up-pulse,next_global_powerup=0)">
+        <action>
+            <message text=" `aAll living players have received a `fTNT`a power-up!"/>
+        </action>
+    </trigger>
+    <trigger scope="match" filter="all(power-up-pulse,next_global_powerup=1)">
+        <action>
+            <!-- TODO: remove when snowballs work in modern versions -->
+            <if max-server-version="1.20">
+                <message text=" `aAll living players have received a `fSnowball`a power-up!"/>
+            </if>
+            <if min-server-version="1.21">
+                <message text=" `aAll living players have received a `fWind Charge`a power-up!"/>
+            </if>
+        </action>
+    </trigger>
+    <trigger scope="match" filter="all(power-up-pulse,next_global_powerup=2)">
+        <action>
+            <message text=" `aAll living players have received a `fFireball`a power-up!"/>
+        </action>
+    </trigger>
+    <!-- TODO: re-enable when snowballs work in modern versions
+    <trigger scope="match" filter="all(power-up-pulse,next_global_powerup=3)">
+        <action>
+            <message text=" `aAll living players have received a `fWind Charge`a power-up!"/>
+        </action>
+    </trigger>
+    -->
+    <trigger scope="match" filter="op-pulse">
+        <action>
+            <message text=" `e⚠ `6A special item has spawned at middle!"/>
+        </action>
+    </trigger>
+    <trigger scope="match" filter="hill_disabled=1">
+        <action>
+            <message text=" `e⚠ `cHill capturing has been disabled for this match!"/>
+            <fill region="center-blocks" material="${hill-block-off}" filter="only-hill-block-on"/>
+            <set var="hill_previously_disabled" value="1"/>
+            <sound key="${block.note_block.bass}" volume="1" pitch="0.75"/>
+        </action>
+    </trigger>
+    <trigger scope="match" filter="all(hill_disabled=0,hill_previously_disabled=1)">
+        <action>
+            <message text=" `e⚠ `aHill capturing has been enabled for this match!"/>
+            <fill region="center-blocks" material="${hill-block-on}" filter="only-hill-block-off"/>
+            <set var="hill_previously_disabled" value="0"/>
+            <sound key="${block.note_block.bass}" volume="1" pitch="0.75"/>
+        </action>
+    </trigger>
+    <action id="killstreak-sound" scope="player">
+        <sound key="${entity.ender_dragon.growl}" volume="1" pitch="0.8"/>
+    </action>
+</actions>
+<control-points capture-rule="exclusive" show-progress="true" permanent="true" points="${hill-points}">
+    <control-point id="default-hill" name="${hill-name}" capture-time="${hill-capture-time}" player-filter="hill_disabled=0">
+        <capture><region id="center-region"/></capture>
+    </control-point>
+</control-points>
+<renewables>
+    <renewable interval="10s" particles="false" sound="true" avoid-players="0">
+        <region>
+            <cylinder base="${item-spawn-point}" radius="2.5" height="4"/>
+        </region>
+        <renew-filter>
+            <material>air</material>
+        </renew-filter>
+        <replace-filter>
+            <material>${game-block}</material>
+        </replace-filter>
+    </renewable>
+</renewables>
+<spawners>
+    <spawner spawn-region="item-spawn" player-region="everywhere" delay="0" filter="all(op_item=0,op-pulse)" max-entities="1">
+        <item material="potion" damage="8267" show-other="false">
+            <effect duration="10s" amplifier="5">jump_boost</effect>
+        </item>
+    </spawner>
+    <spawner spawn-region="item-spawn" player-region="everywhere" delay="0" filter="all(op_item=1,op-pulse)" max-entities="1">
+        <item material="wood sword" name="`fKnockback Sword" damage="59" enchantments="knockback:1"/>
+    </spawner>
+    <spawner spawn-region="item-spawn" player-region="everywhere" delay="0" filter="all(op_item=2,op-pulse)" max-entities="1">
+        <item material="ender pearl"/>
+    </spawner>
+    <spawner spawn-region="item-spawn" player-region="everywhere" delay="0" filter="all(op_item=3,op-pulse)" max-entities="1">
+        <!-- <item material="boat" name="`fBoat Clutcher"/> -->
+        <item material="wood" name="`fBoat Box" lore="`7You should not be reading this..."/>
+    </spawner>
+    <spawner spawn-region="item-spawn" player-region="everywhere" delay="0" filter="all(op_item=4,op-pulse)" max-entities="1">
+        <item material="fishing rod" name="`fPlayer Fishing Rod" damage="64"/>
+    </spawner>
+</spawners>
+<item-mods>
+    <rule>
+        <match>
+            <material>boat</material>
+        </match>
+        <modify name="`fBoat Clutcher" lore="`7PGM Star"/>
+    </rule>
+</item-mods>
+<kill-rewards>
+    <unless variant="lifesteal">
+        <kill-reward>
+            <action>
+                <set var="kill_streak" value="kill_streak+1"/>
+                <set var="player_score" value="player_score+min(kill_streak,5)"/>
+                <message text=" `a`l`o{amount}x`7`o score multiplier!">
+                    <replacements>
+                        <decimal id="amount" value="min(kill_streak,5)"/>
+                    </replacements>
+                </message>
+            </action>
+        </kill-reward>
+    </unless>
+    <!-- Kill Streak messages from oitq.xml -->
+    <kill-reward>
+        <filter>
+            <kill-streak count="3" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <set var="killstreaker" value="1"/>
+                <switch-scope outer="player" inner="match">
+                    <message text=" `b`l» `r{player} `7got a `b`lHAT TRICK`7! `f(3 kills)">
+                        <replacements>
+                            <player id="player" var="killstreaker"/>
+                        </replacements>
+                    </message>
+                </switch-scope>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="5" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <set var="killstreaker" value="1"/>
+                <switch-scope outer="player" inner="match">
+                    <message text=" `a`l» `r{player} `7is on a `a`lKILLING SPREE`7! `f(5 kills)">
+                        <replacements>
+                            <player id="player" var="killstreaker"/>
+                        </replacements>
+                    </message>
+                </switch-scope>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="8" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <set var="killstreaker" value="1"/>
+                <switch-scope outer="player" inner="match">
+                    <message text=" `e`l» `r{player} `7is on a `e`lRAMPAGE`7! `f(8 kills)">
+                        <replacements>
+                            <player id="player" var="killstreaker"/>
+                        </replacements>
+                    </message>
+                </switch-scope>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="12" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <set var="killstreaker" value="1"/>
+                <switch-scope outer="player" inner="match">
+                    <message text=" `6`l» `r{player} `7is `6`lDOMINATING`7! `f(12 kills)">
+                        <replacements>
+                            <player id="player" var="killstreaker"/>
+                        </replacements>
+                    </message>
+                </switch-scope>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="15" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <set var="killstreaker" value="1"/>
+                <switch-scope outer="player" inner="match">
+                    <message text=" `c`l» `r{player} `7is `c`lUNSTOPPABLE`7! `f(15 kills)">
+                        <replacements>
+                            <player id="player" var="killstreaker"/>
+                        </replacements>
+                    </message>
+                </switch-scope>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="22" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <set var="killstreaker" value="1"/>
+                <switch-scope outer="player" inner="match">
+                    <message text=" `4`l» `r{player} `7is `4`lGODLIKE`7! `f(22 kills)">
+                        <replacements>
+                            <player id="player" var="killstreaker"/>
+                        </replacements>
+                    </message>
+                </switch-scope>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="30" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <set var="killstreaker" value="1"/>
+                <switch-scope outer="player" inner="match">
+                    <message text=" `0`l» `r{player} `7is `0`l`kzzuf`7! `f(30 kills)">
+                        <replacements>
+                            <player id="player" var="killstreaker"/>
+                        </replacements>
+                    </message>
+                </switch-scope>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+</kill-rewards>
+<toolrepair>
+    <tool>shears</tool>
+</toolrepair>
+<itemkeep>
+    <item>potion</item>
+    <item>wood sword</item>
+    <item>ender pearl</item>
+    <item>boat</item>
+    <item>fishing rod</item>
+</itemkeep>
+<itemremove>
+    <item>${game-block}</item>
+    <item>leather helmet</item>
+    <item>chainmail helmet</item>
+    <item>iron helmet</item>
+    <item>gold helmet</item>
+    <item>diamond helmet</item>
+    <item>emerald block</item>
+    <item>leather chestplate</item>
+    <item>tnt</item>
+    <item>snowball</item>
+    <item>fireball</item>
+    <item>boat</item>
+</itemremove>
+<tnt>
+    <instantignite>true</instantignite>
+    <blockdamage>true</blockdamage>
+    <power>6</power>
+</tnt>
+<crafting>
+    <disable>carpet</disable>
+    <disable>wood sword</disable>
+    <disable>snow block</disable>
+</crafting>
+<stats>
+    <stat value="times_emerald" name="Emerald-level streaks"/>
+</stats>
+<gamerules>
+    <doFireTick>true</doFireTick>
+</gamerules>
+<hunger>
+    <depletion>off</depletion>
+</hunger>
+<disabledamage>
+    <damage>fall</damage>
+    <damage>fire</damage>
+    <damage>fire tick</damage>
+</disabledamage>
+</map>

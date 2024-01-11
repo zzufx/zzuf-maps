@@ -1,0 +1,197 @@
+<map proto="1.5.0">
+<name>BN: Dark Nebula</name>
+<variant id="rage" override="true">Dark Nebula: Snowball RAGE</variant>
+<variant id="quake" override="true">Dark Nebula: Arena</variant>
+<version>1.0.4</version>
+<if variant="default">
+    <include id="blasternauts"/>
+    <constant id="dark-nebula-kit">blasternaut-kit</constant>
+    <constant id="max-players">12</constant>
+</if>
+<if variant="rage">
+    <include id="void-death"/>
+    <objective>Be the team with the highest amount of kills after 3 minutes!</objective>
+    <constant id="dark-nebula-kit">snowball-kit</constant>
+    <constant id="max-players">8</constant>
+    <time>3m</time>
+    <rage/>
+</if>
+<if variant="quake">
+    <include id="void-death"/>
+    <time>3m</time>
+    <objective>Be the team with the highest amount of kills after 3 minutes!</objective>
+    <constant id="dark-nebula-kit">quakecraft-kit</constant>
+    <constant id="max-players">6</constant>
+    <constant id="void-plane">1</constant>
+    <gamemode>ffa</gamemode>
+    <game>Quake</game> <!-- Xonoticraft 🤔 -->
+</if>
+<created>2023-04-29</created>
+<authors>
+    <author uuid="9d4779a8-d35f-45d2-b51c-95de7a77e128"/> <!-- zzuf -->
+</authors>
+<teams>
+    <team id="yellow" color="yellow" max="${max-players}">Yellow</team>
+    <team id="red" color="dark red" max="${max-players}">Red</team>
+</teams>
+<spawns>
+    <spawn team="yellow" kit="${dark-nebula-kit}">
+        <region>
+            <point>0.5,14,-36.5</point>
+        </region>
+    </spawn>
+    <spawn team="red" kit="${dark-nebula-kit}" yaw="180">
+        <region>
+            <point>0.5,14,37.5</point>
+        </region>
+    </spawn>
+    <default>
+        <regions>
+            <point yaw="90">37.5,39,0.5</point>
+            <point yaw="-90">-36.5,39,0.5</point>
+        </regions>
+    </default>
+</spawns>
+<filters>
+    <team id="only-yellow">yellow</team>
+    <team id="only-red">red</team>
+</filters>
+<regions>
+    <union id="spawn-areas">
+        <union id="yellow-spawn-area">
+            <cuboid min="12,14,-30" max="-11,29,-37"/>
+            <cuboid min="-1,14,-28" max="2,29,-30"/>
+        </union>
+        <mirror id="red-spawn-area" region="yellow-spawn-area" origin="0.5,0,0.5" normal="0,0,1"/>
+    </union>
+    <apply enter="only-yellow" region="yellow-spawn-area" message="You may not enter the enemy's spawn!"/>
+    <apply enter="only-red" region="red-spawn-area" message="You may not enter the enemy's spawn!"/>
+    <cuboid id="middle-spawner" min="-1,12,-1" size="3,1,3"/>
+    <apply velocity="0,1.2,0">
+        <region>
+            <cuboid id="yellow-spawn-jump-pad" min="-1,14,-23" size="3,1,1"/>
+            <mirror region="yellow-spawn-jump-pad" origin="0.5,0,0.5" normal="0,0,1"/>
+            <cuboid id="yellow-mid-jump-pad" min="0,4,-14" size="1,1,1"/>
+            <mirror region="yellow-mid-jump-pad" origin="0.5,0,0.5" normal="0,0,1"/>
+        </region>
+    </apply>
+    <apply velocity="0,1.8,0">
+        <region>
+            <cuboid id="yellow-side-jump-pad" min="-24,5,-3" size="1,1,1"/>
+            <cuboid id="red-side-jump-pad" min="24,5,3" size="1,1,1"/>
+        </region>
+    </apply>
+</regions>
+<if variant="default">
+    <spawners>
+        <spawner spawn-region="middle-spawner" player-region="everywhere" max-entities="6" delay="4s">
+            <item amount="1" name="`cGrenade MK II `6| `9Right click to use." material="fireball" projectile="fireball-grenade"/>
+        </spawner>
+    </spawners>
+</if>
+<if variant="rage">
+    <kits>
+        <kit id="snowball-kit">
+            <effect duration="2.5s" amplifier="128">resistance</effect>
+            <item slot="0" material="diamond sword" enchantments="sharpness:10" unbreakable="true"/>
+            <item slot="1" amount="4" material="snowball" name="`fHeavy Snowball" projectile="heavySnowball" enchantments="sharpness:10"/>
+            <helmet material="leather helmet" team-color="true" unbreakable="true" locked="true"/>
+            <double-jump/>
+            <game-mode>adventure</game-mode>
+        </kit>
+    </kits>
+    <score>
+        <kills>1</kills>
+    </score>
+    <projectiles>
+        <projectile id="heavySnowball" name="Heavy Snowball" projectile="Snowball" damage="9999" throwable="true" click="right"/>
+    </projectiles>
+    <regions>
+        <apply block="never"/>
+    </regions>
+    <kill-rewards>
+        <kill-reward>
+            <item amount="2" material="snowball" name="`fHeavy Snowball" projectile="heavySnowball" enchantments="sharpness:10"/>
+        </kill-reward>
+    </kill-rewards>
+    <toolrepair>
+        <tool>diamond sword</tool>
+    </toolrepair>
+    <itemkeep>
+        <item>snowball</item>
+    </itemkeep>
+    <itemremove>
+        <item>leather helmet</item>
+    </itemremove>
+    <disabledamage>
+        <damage>fall</damage>
+    </disabledamage>
+    <hunger>
+        <depletion>off</depletion>
+    </hunger>
+</if>
+<if variant="quake">
+    <kits>
+        <kit id="quakecraft-kit">
+            <item slot="0" unbreakable="true" material="diamond barding" name="`bRailgun" lore="`eLeft click `7to boost, `eRight click`7 to fire.|`8Obtained by running 'impulse 9' in Beyond." projectile="zzuf-quake" consumable="zzuf-railgun"/>
+            <effect duration="3s" amplifier="255" ambient="true">damage resistance</effect>
+            <game-mode>adventure</game-mode>
+            <action>
+                <set var="railgun_boost" value="0"/>
+            </action>
+        </kit>
+    </kits>
+    <respawn auto="true" delay="0"/>
+    <projectiles>
+        <projectile
+            id="zzuf-quake"
+            name="Railgun"
+            projectile="SmallFireball"
+            velocity="12"
+            damage="100"
+            throwable="false"
+            click="right"
+            cooldown="1s"/>
+    </projectiles>
+    <variables>
+        <variable id="railgun_boost" default="0" scope="player"/>
+    </variables>
+    <consumables>
+        <consumable id="zzuf-railgun" on="left click" consume="false">
+            <action filter="railgun_boost=0">
+                <sound key="${entity.generic.extinguish_fire}" volume="0.25" pitch=".5"/>
+                <teleport x="player.x" y="player.y+0.5" z="player.z"/>
+                <velocity x="player.vel_x+player.dir_x*2" y="0" z="player.vel_z+player.dir_z*2"/>
+                <set var="railgun_boost" value="1"/>
+            </action>
+        </consumable>
+    </consumables>
+    <actions>
+        <trigger scope="player">
+            <filter>
+                <after duration="2s" filter="railgun_boost=1"/>
+            </filter>
+            <action>
+                <set var="railgun_boost" value="0"/>
+            </action>
+        </trigger>
+    </actions>
+    <regions>
+        <apply block="never"/>
+    </regions>
+    <score>
+        <kills>1</kills>
+    </score>
+    <itemremove>
+        <item>diamond barding</item>
+    </itemremove>
+    <disabledamage>
+        <damage>fall</damage>
+        <damage>entity attack</damage>
+        <damage>fire tick</damage>
+    </disabledamage>
+    <hunger>
+        <depletion>off</depletion>
+    </hunger>
+</if>
+</map>
