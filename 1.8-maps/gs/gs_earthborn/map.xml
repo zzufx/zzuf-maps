@@ -1,0 +1,31 @@
+<map proto="1.4.2">
+<name>GS: Earthborn</name> <!-- Ghost Squadron version of Earthborn -->
+<version>1.0</version>
+<created>2022-11-09</created>
+<include id="gs"/>
+<objective>Eliminate the other team before the time runs out!</objective>
+<authors>
+    <author uuid="9d4779a8-d35f-45d2-b51c-95de7a77e128"/> <!-- zzuf -->
+</authors>
+<teams>
+    <team id="red-team" color="dark red" max="5" show-name-tags="allies">Red</team>
+    <team id="yellow-team" color="yellow" max="5" show-name-tags="allies">Yellow</team>
+</teams>
+<spawns>
+    <spawn team="red-team" yaw="90">
+        <region>
+            <point>17.5,5.5,1.5</point>
+        </region>
+    </spawn>
+    <spawn team="yellow-team" yaw="-90">
+        <region>
+            <point>-16.5,5.5,1.5</point>
+        </region>
+    </spawn>
+    <default yaw="0">
+        <region>
+            <point>0.5,31.5,-33.5</point>
+        </region>
+    </default>
+</spawns>
+</map>
