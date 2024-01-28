@@ -6,7 +6,7 @@
 <!-- Item Sumo gamemode include file -->
 <!-- Contains two versions: score-based Item Sumo (non-Blitz) and life-based Item Sumo (Blitz) -->
 <!-- Created by zzuf (GitHub @zzufx) -->
-<!-- Version 2024.01.24-4 -->
+<!-- Version 2024.01.27-2 -->
 <include id="void-death"/>
 <variant id="lifesteal">Lifesteal</variant>
 <constants>
@@ -17,15 +17,11 @@
     <constant id="initial-lives">3</constant>
     <constant id="void-plane">-5</constant>
     <constant id="time-limit">4m</constant>
-    <!-- Lifesteal include constants -->
-    <constant id="max-lives">5</constant>
-    <constant id="max-lives-enabled">1</constant>
-    <constant id="total-lives">99</constant>
-    <constant id="tutorial-word2">lives</constant>
 </constants>
 <broadcasts>
     <unless variant="lifesteal">
-        <alert after="6s" every="1m10s">`3Get the most amount of `ckills`3, or `acapture the hill`3 at the center of the map to win!</alert>
+        <alert after="1m6s" every="1m" filter="joined-for-20s">`3Get the most amount of `ckills`3, or `acapture the hill`3 at the center of the map to win!</alert>
+        <alert after="1m7s" every="1m" filter="joined-for-20s">`3You get `fmore`3 points based on your `ckill streak`3!</alert>
     </unless>
     <if variant="lifesteal">
         <alert after="6s" every="1m10s">`3Be the `flast`3 player standing, or `acapture the hill`3 at the center of the map to instantly win!</alert>
@@ -35,6 +31,13 @@
 <if variant="lifesteal">
     <phase>development</phase>
     <include id="lifesteal"/>
+    <constants>
+        <!-- Lifesteal include constants -->
+        <constant id="max-lives">5</constant>
+        <constant id="max-lives-enabled">1</constant>
+        <constant id="total-lives">99</constant>
+        <constant id="tutorial-word2">lives</constant>
+    </constants>
     <blitz>
         <lives>${initial-lives}</lives>
         <broadcastLives>true</broadcastLives>
@@ -42,23 +45,19 @@
 </if>
 <unless variant="lifesteal">
     <game>Item Sumo</game>
-    <score>
-        <kills>1</kills>
-    </score>
     <time>${time-limit}</time>
+    <score/>
 </unless>
 <kits>
     <kit id="spawn-kit" reset-ender-pearls="true">
         <clear/>
-        <item slot="3" unbreakable="true" material="shears"/>
+        <item slot="0" amount="64" team-color="true" material="wool"/>
+        <item slot="8" unbreakable="true" material="shears"/>
         <helmet unbreakable="true" team-color="true" material="leather helmet"/>
         <effect amplifier="255">resistance</effect>
-        <action>
-            <kit id="wool-kit"/>
-        </action>
     </kit>
     <kit id="wool-kit">
-        <item slot="4" amount="64" team-color="true" material="wool"/> <!-- amount="oo" behaves weirdly with higher ping -->
+        <item amount="32" team-color="true" material="wool"/> <!-- amount="oo" behaves weirdly with higher ping -->
     </kit>
     <give kit="wool-kit" filter="give-blocks"/>
     <!-- Global Power-Ups -->
@@ -71,28 +70,29 @@
     <kit id="pw-fb">
         <item material="fireball" projectile="fireball-projectile"/>
     </kit>
-    <give kit="pw-tnt" filter="tnt-pulse"/>
-    <give kit="pw-sb" filter="snowball-pulse"/>
-    <give kit="pw-fb" filter="fireball-pulse"/>
+    <give kit="pw-tnt" filter="all(base-pulse,next_global_powerup=0)"/>
+    <give kit="pw-sb" filter="all(base-pulse,next_global_powerup=1)"/>
+    <give kit="pw-fb" filter="all(base-pulse,next_global_powerup=2)"/>
 </kits>
 <filters>
+    <after id="joined-for-20s" duration="20s">
+        <not id="just-joined">
+            <observing/>
+        </not>
+    </after>
     <all id="base-pulse">
         <filter id="power-up-pulse"/>
         <participating/>
         <alive/>
     </all>
-    <pulse id="give-blocks" duration="1s" period="4s">
-        <after duration="5s">
-            <all>
-                <match-running/>
-                <participating/>
-                <alive/>
-                <not>
-                    <carrying ignore-metadata="true" amount="[64,oo)"><item material="wool"/></carrying>
-                </not>
-            </all>
-        </after>
-    </pulse>
+    <all id="give-blocks">
+        <match-running/>
+        <participating/>
+        <alive/>
+        <not>
+            <carrying ignore-metadata="true" amount="[32,oo)"><item material="wool"/></carrying>
+        </not>
+    </all>
     <any id="only-some">
         <material>wool</material>
         <material>fire</material>
@@ -113,34 +113,6 @@
             </all>
         </after>
     </pulse>
-    <all id="power-up-reset">
-        <variable var="next_global_powerup">3</variable>
-        <filter id="after-pulse"/>
-    </all>
-    <all id="tnt-pulse">
-        <variable var="next_global_powerup">0</variable>
-        <filter id="base-pulse"/>
-    </all>
-    <all id="snowball-pulse">
-        <variable var="next_global_powerup">1</variable>
-        <filter id="base-pulse"/>
-    </all>
-    <all id="fireball-pulse">
-        <variable var="next_global_powerup">2</variable>
-        <filter id="base-pulse"/>
-    </all>
-    <all id="tnt-message">
-        <variable var="next_global_powerup">0</variable>
-        <filter id="power-up-pulse"/>
-    </all>
-    <all id="snowball-message">
-        <variable var="next_global_powerup">1</variable>
-        <filter id="power-up-pulse"/>
-    </all>
-    <all id="fireball-message">
-        <variable var="next_global_powerup">2</variable>
-        <filter id="power-up-pulse"/>
-    </all>
     <!-- OP items -->
     <pulse id="op-pulse" duration="0.25s" period="${item-spawn-rate}">
         <after duration="0.25s">
@@ -175,6 +147,10 @@
     2: fireball
     -->
     <variable id="op_item" default="0" scope="match"/>
+    <unless variant="lifesteal">
+        <variable id="kill_streak" default="0" scope="player"/>
+        <score id="player_score"/>
+    </unless>
 </variables>
 <regions>
     <negative id="not-playable-area">
@@ -190,6 +166,26 @@
     <apply enter="never" region="center-blocks"/>
 </regions>
 <actions>
+    <unless variant="lifesteal">
+        <trigger scope="player" filter="just-joined">
+            <action>
+                <sound preset="alert"/>
+                <message text=" `e⚠ `3Get the most amount of `ckills`3, or `acapture the hill`3 at the center of the map to win!"/>
+                <message text=" `e⚠ `3You get `fmore`3 points based on your `ckill streak`3!"/>
+            </action>
+        </trigger>
+        <trigger scope="player">
+            <filter>
+                <any>
+                    <dead/>
+                    <observing/>
+                </any>
+            </filter>
+            <action>
+                <set var="kill_streak" value="0"/>
+            </action>
+        </trigger>
+    </unless>
     <trigger scope="player">
         <filter>
             <carrying ignore-metadata="true"><item material="wood"/></carrying>
@@ -220,23 +216,23 @@
             <set var="next_global_powerup" value="next_global_powerup+1"/>
         </action>
     </trigger>
-    <trigger scope="match" filter="power-up-reset">
+    <trigger scope="match" filter="all(after-pulse,next_global_powerup=3)">
         <action>
             <set var="next_global_powerup" value="0"/>
         </action>
     </trigger>
     <!-- Messages -->
-    <trigger scope="match" filter="tnt-message">
+    <trigger scope="match" filter="all(power-up-pulse,next_global_powerup=0)">
         <action>
             <message text=" `aAll living players have received a `fTNT`a power-up!"/>
         </action>
     </trigger>
-    <trigger scope="match" filter="snowball-message">
+    <trigger scope="match" filter="all(power-up-pulse,next_global_powerup=1)">
         <action>
             <message text=" `aAll living players have received a `fSnowball`a power-up!"/>
         </action>
     </trigger>
-    <trigger scope="match" filter="fireball-message">
+    <trigger scope="match" filter="all(power-up-pulse,next_global_powerup=2)">
         <action>
             <message text=" `aAll living players have received a `fFireball`a power-up!"/>
         </action>
@@ -246,6 +242,9 @@
             <message text=" `e⚠ `6A special item has spawned at middle!"/>
         </action>
     </trigger>
+    <action id="killstreak-sound" scope="player">
+        <sound key="mob.enderdragon.growl" volume="1" pitch="0.8"/>
+    </action>
 </actions>
 <control-points capture-rule="exclusive" show-progress="true">
     <control-point name="Center" capture-time="${hill-capture-time}">
@@ -290,6 +289,99 @@
         <modify name="`fBoat Clutcher" lore="`7PGM Star"/>
     </rule>
 </item-mods>
+<kill-rewards>
+    <unless variant="lifesteal">
+        <kill-reward>
+            <action>
+                <set var="kill_streak" value="kill_streak+1"/>
+                <set var="player_score" value="player_score+min(kill_streak,5)"/>
+                <message text=" `a`l`o{amount}x`7`o score multiplier!">
+                    <replacements>
+                        <decimal id="amount" value="min(kill_streak,5)"/>
+                    </replacements>
+                </message>
+            </action>
+        </kill-reward>
+    </unless>
+    <!-- Kill Streak messages from oitq.xml -->
+    <kill-reward>
+        <filter>
+            <kill-streak count="3" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <message text=" `b`lTriple kill! `f(3 kills)"/>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="5" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <message text=" `a`lKilling Spree! `f(5 kills)"/>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="10" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <message text=" `e`lRampage! `f(10 kills)"/>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="15" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <message text=" `6`lDominating! `f(15 kills)"/>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="20" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <message text=" `c`lUnstoppable! `f(20 kills)"/>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="30" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <message text=" `4`lGODLIKE! `f(30 kills)"/>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+    <kill-reward>
+        <filter>
+            <kill-streak count="50" repeat="false"/>
+        </filter>
+        <kit>
+            <action>
+                <message text=" `0`l`kzzuf`r `f(50 kills)"/>
+                <action id="killstreak-sound"/>
+            </action>
+        </kit>
+    </kill-reward>
+</kill-rewards>
 <toolrepair>
     <tool>shears</tool>
 </toolrepair>
