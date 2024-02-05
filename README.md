@@ -17,4 +17,4 @@ These files go into the includes folder defined in PGM's *config.yml*
 These are highly experimental maps for newer versions of Minecraft, and are not compatible with Minecraft 1.8. They receive limited to no testing, as PGM for those versions receives little to no usage at the moment.
 
 ### other-maps
-This folder contains PGM XML fiels I've made for classic or miscellaneous Minecraft maps, such as Pizza Spleef by SethBling (released in 2013)
+This folder contains PGM XML files I've made for classic or miscellaneous Minecraft maps not made by me, such as Pizza Spleef by SethBling (released in 2013)
