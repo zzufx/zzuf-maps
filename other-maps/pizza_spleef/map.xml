@@ -1,6 +1,6 @@
 <map proto="1.4.2">
 <name>Pizza Spleef</name>
-<version>1.0.2</version>
+<version>1.0.3</version>
 <objective>Destroy the blocks below your enemies, and eat toppings to get bonuses!</objective>
 <created>2013-11-23</created>
 <game>Pizza Spleef</game>
@@ -55,7 +55,19 @@
     <after duration="20s" message="`fAll players will receive `6Fireball `fprojectiles in {0}">
         <time>4m10s</time>
     </after>
+    <deny id="deny-explosions">
+        <cause>explosion</cause>
+    </deny>
 </filters>
+<regions>
+    <apply>
+        <block>
+            <deny>
+                <material>iron block</material>
+            </deny>
+        </block>
+    </apply>
+</regions>
 <actions>
     <action id="give-blindness" scope="match">
         <switch-scope outer="match" inner="player">
@@ -91,7 +103,10 @@
 <block-drops>
     <rule>
         <filter>
-            <material>redstone block</material>
+            <all>
+                <material>redstone block</material>
+                <filter id="deny-explosions"/>
+            </all>
         </filter>
         <kit force="true">
             <effect amplifier="2" duration="5s">speed</effect>
@@ -102,7 +117,10 @@
     </rule>
     <rule>
         <filter>
-            <material>obsidian</material>
+            <all>
+                <material>obsidian</material>
+                <filter id="deny-explosions"/>
+            </all>
         </filter>
         <kit force="true">
             <action>
@@ -118,7 +136,10 @@
     </rule>
     <rule>
         <filter>
-            <material>wool</material>
+            <all>
+                <material>wool</material>
+                <filter id="deny-explosions"/>
+            </all>
         </filter>
         <kit force="true">
             <effect amplifier="6" duration="10s">jump_boost</effect>
@@ -129,7 +150,10 @@
     </rule>
     <rule>
         <filter>
-            <material>stained glass</material>
+            <all>
+                <material>stained glass</material>
+                <filter id="deny-explosions"/>
+            </all>
         </filter>
         <kit force="true">
             <effect duration="10s">invisibility</effect>
@@ -140,7 +164,10 @@
     </rule>
     <rule>
         <filter>
-            <material>wood</material>
+            <all>
+                <material>wood</material>
+                <filter id="deny-explosions"/>
+            </all>
         </filter>
         <kit force="true">
             <item material="monster egg" damage="50" name="`fExplosive" amount="3"/>
@@ -151,7 +178,10 @@
     </rule>
     <rule>
         <filter>
-            <material>soul sand</material>
+            <all>
+                <material>soul sand</material>
+                <filter id="deny-explosions"/>
+            </all>
         </filter>
         <kit force="true">
             <item material="potion" damage="16394" name="`fSlow Bomb" lore="Slows down your enemies, but be careful not to hit yourself!" amount="3">
@@ -164,7 +194,10 @@
     </rule>
     <rule>
         <filter>
-            <material>gold block</material>
+            <all>
+                <material>gold block</material>
+                <filter id="deny-explosions"/>
+            </all>
         </filter>
         <kit force="true">
             <action>
