@@ -2,11 +2,10 @@
 <!-- [#####|#####] -->
 <!-- Bridge gamemode include file -->
 <!-- Created by zzuf -->
-<!-- Version 2024.01.09-1 -->
+<!-- Version 2024.04.10-1 -->
 <gamemode>bridge</gamemode>
 <respawn auto="true" delay="0s"/>
 <modifybowprojectile pickup-filter="never"/>
-<time result="score" show="false">15m</time>
 <constants> <!-- Default values - Can be overriden by an individual map's code -->
     <!-- Map -->
     <constant id="map-origin">0.5,0,0.5</constant>
@@ -15,8 +14,9 @@
     <constant id="score-limit">5</constant>
     <constant id="mercy-limit">-1</constant>
     <constant id="pre-round-time">5s</constant>
-    <!-- Kit - EXPERIMENTAL -->
+    <!-- Misc. -->
     <constant id="main-kit">spawn-kit</constant> <!-- If using a custom name, requires a clear-[your kit name] action - can throw an error, but the map will still load -->
+    <constant id="max-health">20</constant>
     <!-- Teams (placeholders) -->
     <constant id="team-one-spawn">0.5,0,0.5</constant>
     <constant id="team-one-yaw">-90</constant>
@@ -43,19 +43,23 @@
         <item material="diamond pickaxe" enchantment="dig speed:2" unbreakable="true"/>
         <item material="stained clay" team-color="true" amount="64"/>
         <item material="stained clay" team-color="true" amount="64"/>
-        <item material="golden apple" amount="8" consumable="bridge-apple" prevent-sharing="true" lore="`9ⓘ `7Instantly restores to `c20 HP`7!|`9ⓘ `7Grants `eAbsorption`7 for `f1 minute`7!"/>
+        <item material="golden apple" amount="8" consumable="bridge-apple" prevent-sharing="true" lore="`9ⓘ `7Instantly restores to `c${max-health} HP`7!|`9ⓘ `7Grants `eAbsorption`7 for `f1 minute`7!"/>
         <effect duration="oo">invisibility</effect>
         <effect duration="oo" amplifier="255">slow_digging</effect>
         <effect duration="2s" amplifier="255">resistance</effect>
-        <health>20</health>
     </kit>
     <kit id="map-kit">
         <action id="clear-${main-kit}"/>
         <action>
             <kit id="${main-kit}"/>
             <kit id="arrow-kit"/>
+            <kit id="heal-kit"/>
         </action>
         <action id="remove-extra-armor"/>
+    </kit>
+    <kit id="heal-kit" force="true">
+        <max-health>${max-health}</max-health>
+        <health>${max-health}</health>
     </kit>
     <kit id="armor-kit">
         <chestplate material="leather chestplate" team-color="true" unbreakable="true" prevent-sharing="true"/>
@@ -83,7 +87,7 @@
         <effect duration="0" amplifier="1">absorption</effect>
     </kit>
     <kit id="bridge-apple-kit" force="true">
-        <health>20</health>
+        <health>${max-health}</health>
         <action scope="player" filter="no-absorption">
             <kit id="absorption-kit"/>
         </action>
@@ -281,13 +285,23 @@
     <variable id="buytime" scope="match" default="0"/>
     <variable id="overtime" scope="match" default="0"/>
     <score id="team_score"/>
+    <with-team id="team_one_score" var="team_score" team="team-one"/>
+    <with-team id="team_two_score" var="team_score" team="team-two"/>
+    <variable id="player_score" scope="player" default="0"/>
     <variable id="current_team" scope="player" default="0"/> <!-- 0: Observers, 1: team-one, 2: team-two -->
     <variable id="scoring_team" scope="match" default="0"/>
+    <timelimit id="time_limit"/>
 </variables>
 <actions>
     <action id="increment-round" scope="player">
         <set var="team_score" value="team_score+1"/>
-        <message text="`aYou have scored a goal!"/>
+        <set var="player_score" value="player_score+1"/>
+        <message text=" `e⚠ `aYou have scored a goal!"/>
+        <message text=" `2You have scored `e{amount} `2goal(s) in this match.">
+            <replacements>
+                <decimal id="amount" value="player_score"/>
+            </replacements>
+        </message>
         <switch-scope outer="player" inner="match">
             <set var="can_score" value="0"/>
             <set var="round_status" value="1"/>
@@ -370,6 +384,8 @@
         <message text="`5# # # # # # # # # # # # # # # #"/>
         <message text="`5# #         `6» `6`lGOAL! `6«`5         # #"/>
         <message text="`5# #    `aYour team scored!`5    # #"/>
+        <action id="message-score-display-team-one"/>
+        <action id="message-score-display-team-two"/>
         <message text="`5# # # # # # # # # # # # # # # #"/>
         <message title="`f`lGOAL!" subtitle="`7The next round will begin shortly." fade-in="0.5" stay="2" fade-out="0.5"/>
         <sound key="portal.travel" volume="0.2" pitch="2"/> <!-- OBJECTIVE_GOOD with lower volume -->
@@ -378,9 +394,27 @@
         <message text="`5# # # # # # # # # # # # # # # #"/>
         <message text="`5# #         `6» `6`lGOAL! `6«`5         # #"/>
         <message text="`5# #    `cThe enemy scored`5    # #"/>
+        <action id="message-score-display-team-one"/>
+        <action id="message-score-display-team-two"/>
         <message text="`5# # # # # # # # # # # # # # # #"/>
         <message title="`f`lGOAL!" subtitle="`7The next round will begin shortly." fade-in="0.5" stay="2" fade-out="0.5"/>
         <sound key="mob.blaze.death" volume="0.4" pitch="0.8"/> <!-- OBJECTIVE_BAD with lower volume -->
+    </action>
+    <action filter="only-team-one" id="message-score-display-team-one" scope="player">
+        <message text="`5# #            `f{one-score}`6 `l－`r `f{two-score}`5            # #">
+            <replacements>
+                <decimal id="one-score" value="team_one_score"/>
+                <decimal id="two-score" value="team_two_score"/>
+            </replacements>
+        </message>
+    </action>
+    <action filter="only-team-two" id="message-score-display-team-two" scope="player">
+        <message text="`5# #            `f{two-score}`6 `l－`r `f{one-score}`5            # #">
+            <replacements>
+                <decimal id="one-score" value="team_one_score"/>
+                <decimal id="two-score" value="team_two_score"/>
+            </replacements>
+        </message>
     </action>
     <action id="message-reset-scoring-team" scope="match">
         <set var="scoring_team" value="0"/>
@@ -389,6 +423,12 @@
     <action id="message-obs-scored" scope="player">
         <message text="`5# # # # # # # # # # # #"/>
         <message text="`5# #    `6» `6`lGOAL! `6«`5    # #"/>
+        <message text="`5# #       `f{one-score}`6 `l－`r `f{two-score}`5       # #">
+            <replacements>
+                <decimal id="one-score" value="team_one_score"/>
+                <decimal id="two-score" value="team_two_score"/>
+            </replacements>
+        </message>
         <message text="`5# # # # # # # # # # # #"/>
         <sound key="fireworks.twinkle"/>
     </action>
@@ -435,18 +475,38 @@
             <replace material="air"/>
         </replace-item>
     </action>
-    <action id="deduct-point" scope="team" expose="true">
+    <action id="deduct-point-one" scope="team" expose="true">
         <!--
         This action is intended to remove points obtained through very obvious cheating (for instance, players using Blink or Fly, or Block Glitching)
         This effect can also be achieved via the "/variable set" command, but this method prints a nice and public message in chat
-        
-        To use this, you need to join the team you want to remove the point from.
         -->
-        <set var="team_score" value="team_score-1"/>
+        <set var="team_one_score" value="team_one_score-1"/>
         <switch-scope outer="team" inner="match">
             <message text=" `e⚠ `cA point has been deducted from one of the teams as it had been obtained illegitimately."/>
         </switch-scope>
     </action>
+    <action id="deduct-point-two" scope="team" expose="true">
+        <!--
+        This action is intended to remove points obtained through very obvious cheating (for instance, players using Blink or Fly, or Block Glitching)
+        This effect can also be achieved via the "/variable set" command, but this method prints a nice and public message in chat
+        -->
+        <set var="team_two_score" value="team_two_score-1"/>
+        <switch-scope outer="team" inner="match">
+            <message text=" `e⚠ `cA point has been deducted from one of the teams as it had been obtained illegitimately."/>
+        </switch-scope>
+    </action>
+    <!-- Match end -->
+    <trigger scope="match">
+        <filter>
+            <all>
+                <time>15m</time>
+                <filter id="overtime-disabled"/>
+            </all>
+        </filter>
+        <action>
+            <set var="time_limit" value="0"/>
+        </action>
+    </trigger>
 </actions>
 <regions>
     <apply block-place="deny-participating" region="not-buildable">
@@ -520,7 +580,7 @@
         <match>
             <material>golden apple</material>
         </match>
-        <modify consumable="bridge-apple" prevent-sharing="true" lore="`9ⓘ `7Instantly restores to `c20 HP`7!|`9ⓘ `7Grants `eAbsorption`7 for `f1 minute`7!"/>
+        <modify consumable="bridge-apple" prevent-sharing="true" lore="`9ⓘ `7Instantly restores to `c${max-health} HP`7!|`9ⓘ `7Grants `eAbsorption`7 for `f1 minute`7!"/>
     </rule>
 </item-mods> -->
 </map>

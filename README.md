@@ -10,9 +10,12 @@ This is a collection of maps I've worked on where I had complete or the biggest 
 This collection includes Arcade, Bed Wars, Blitz, Bridge, DTM, One in the Quiver, Ghost Squadron and Mixed maps.
 
 ### includes
-This folder contains custom gamemode files I've made that are required by some of my maps (e.g.: Bridge maps need the [bridge.xml](https://github.com/zzufx/zzuf-maps/blob/master/includes/bridge.xml) include to work). Some gamemodes, like Bed Wars and Ghost Squadron, use include files that were only partially or not made by me, which you can find in [OvercastCommunity/PublicMaps](https://github.com/OvercastCommunity/PublicMaps/tree/main/includes)
+This folder contains custom gamemode files I've made that are required by some of my maps (e.g.: Bridge maps need the [bridge.xml](https://github.com/zzufx/zzuf-maps/blob/master/includes/bridge.xml) include to work). Some gamemodes, like Bed Wars and Ghost Squadron, use include files that were only partially or not made by me, which you can find in [OvercastCommunity/PublicMaps](https://github.com/OvercastCommunity/PublicMaps/tree/main/includes).
 
 These files go into the includes folder defined in PGM's *config.yml*
+
+For more information on how to use [bridge.xml](https://github.com/zzufx/zzuf-maps/blob/master/includes/bridge.xml) visit [this link](https://zzufx.github.io/bridge.html).
+
 ### 1.12-maps
 These are highly experimental maps for newer versions of Minecraft, and are not compatible with Minecraft 1.8. They receive limited to no testing, as PGM for those versions receives little to no usage at the moment.
 
