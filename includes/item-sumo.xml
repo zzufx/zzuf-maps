@@ -6,7 +6,7 @@
 <!-- Item Sumo gamemode include file -->
 <!-- Contains two versions: score-based Item Sumo (non-Blitz) and life-based Item Sumo (Blitz) -->
 <!-- Created by zzuf (GitHub @zzufx) -->
-<!-- Version 2024.03.11-1 -->
+<!-- Version 2024.03.11-2 -->
 <include id="void-death"/>
 <variant id="lifesteal">Lifesteal</variant>
 <constants>
@@ -105,7 +105,7 @@
             <helmet locked="true" unbreakable="true" material="diamond helmet"/>
         </kit>
         <kit id="kill-streak-5-kit" force="true">
-            <helmet locked="true" material="${hill-block-on}"/>
+            <helmet locked="true" material="emerald block"/>
         </kit>
         <give kit="kill-streak-1-kit" filter="all(is-playing,kill_streak=1)"/>
         <give kit="kill-streak-2-kit" filter="all(is-playing,kill_streak=2)"/>
@@ -504,7 +504,7 @@
     <item>iron helmet</item>
     <item>gold helmet</item>
     <item>diamond helmet</item>
-    <item>${hill-block-on}</item>
+    <item>emerald block</item>
     <item>leather chestplate</item>
     <item>tnt</item>
     <item>snowball</item>
