@@ -14,9 +14,11 @@ This folder contains custom gamemode files I've made that are required by some o
 
 These files go into the includes folder defined in PGM's *config.yml*
 
-For more information on how to use [bridge.xml](https://github.com/zzufx/zzuf-maps/blob/master/includes/bridge.xml) visit [this link](https://zzufx.github.io/bridge.html)!.
+For more information on how to use [bridge.xml](https://github.com/zzufx/zzuf-maps/blob/master/includes/bridge.xml) visit [this link](https://zzufx.github.io/bridge.html)!
 
-For more information on how to use [item-sumo.xml](https://github.com/zzufx/zzuf-maps/blob/master/includes/item-sumo.xml) visit [this link](https://zzufx.github.io/item_sumo.html)!.
+For more information on how to use [item-sumo.xml](https://github.com/zzufx/zzuf-maps/blob/master/includes/item-sumo.xml) visit [this link](https://zzufx.github.io/item_sumo.html)!
+
+For more information on what **Bridge Swap** is and how to use [bridge-swap.xml](https://github.com/zzufx/zzuf-maps/blob/master/includes/bridge-swap.xml) visit [this link](https://zzufx.github.io/bridge-swap.html)!
 
 ### 1.12-maps
 These are highly experimental maps for newer versions of Minecraft, and are not compatible with Minecraft 1.8. They receive limited to no testing, as PGM for those versions receives little to no usage at the moment.
