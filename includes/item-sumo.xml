@@ -1,4 +1,4 @@
-<map proto="1.4.2">
+<map>
 <!--
 █ ▀█▀ █▀▀ █▀▄▀█   █▀ █░█ █▀▄▀█ █▀█
 █ ░█░ ██▄ █░▀░█   ▄█ █▄█ █░▀░█ █▄█
@@ -6,7 +6,7 @@
 <!-- Item Sumo gamemode include file -->
 <!-- Contains two versions: score-based Item Sumo (non-Blitz) and life-based Item Sumo (Blitz) -->
 <!-- Created by zzuf (GitHub @zzufx) -->
-<!-- Version 2024.12.23-1 -->
+<!-- Version 2024.12.23-2 -->
 <include id="void-death"/>
 <variant id="lifesteal">Lifesteal</variant>
 <constants>
@@ -53,6 +53,7 @@
         <lives>${initial-lives}</lives>
         <broadcastLives>true</broadcastLives>
     </blitz>
+    <game>IS and Lifesteal</game>
 </if>
 <unless variant="lifesteal">
     <game>Item Sumo</game>
