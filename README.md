@@ -17,7 +17,7 @@ These files go into the includes folder defined in PGM's *config.yml*
 ### maps
 This is a collection of maps I've worked on where I had complete or the biggest share of creative input. This folder contains maps for Minecraft versions 1.8 and 1.21, some maps having variants of themselves for both versions.
 
-The following maps can be found in this repo. Maps with variants have the "main" map in **bold**.
+The following maps can be found in this repo. All maps come with their XML configuration files. Maps with variants have the "main" map in **bold**.
 
 | Name | Gamemode(s) | Notes |
 | ---- | ---- | ---- |
@@ -55,13 +55,14 @@ The following maps can be found in this repo. Maps with variants have the "main"
 | **Polynesia _(1.8 version)_**<br>Polynesia _(1.21 version)_<br>Polynesia: Trident RAGE | **One in the Quiver**<br>One in the Quiver<br>Trident RAGE FFA Deathmatch |
 | Potrzebie | TDM |
 | **Random Items**<br>Random Items: BFP<br>Random Items: Upside Down<br>Random Items: Void<br> | **Arcade**<br>Arcade<br>Arcade<br>Arcade | 
-| **Rockaway Bridge**<br>Rockaway Ridge | Double Bridge<br>Double Bridge | <br>Halloween variant |
+| **Rockaway Bridge**<br>Rockaway Ridge<br>Rockaway Fridge | Double Bridge<br>Double Bridge<br>Double Bridge | <br>Halloween variant<br>Christmas variant |
 | Sagojn | Bed Wars |
 | Sagujo | One in the Quiver Teams + Blitz |
+| Tartarus | Tension (Bridge with scaffolding) |
 | Thistle | Tension (Bridge with scaffolding) |
 | **Trial Chambers**<br>Trial Chambers: Blitz<br>Trial Chambers: Crossbow Blast | **Laser Tag TDM**<br>Laser Tag TDM + Blitz<br>Crossbow Blast TDM |
 | **Weald**<br>Weald: Lifesteal | **Item Sumo**<br>Item Sumo + Blitz: Lifesteal |
-| Whac-A-Mole | Arcade |
+| **Whac-A-Mole**<br>Whac-A-Mole: Bleak | Arcade |
 | Yonaguni | Bridge |
 
 ### xml-only
