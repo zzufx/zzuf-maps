@@ -1,0 +1,115 @@
+<map proto="1.5" min-server-version="1.21.10"> <!-- Utilizes CMP fork features -->
+<name>CHICKEN JOCKEY</name>
+<version>1.0.7</version>
+<objective>Kill the other chicken jockeys!</objective>
+<created>2026-02-01</created>
+<game>CHICKEN JOCKEY</game>
+<include id="void-death"/>
+<constant id="void-plane">60</constant>
+<authors>
+    <author uuid="9d4779a8-d35f-45d2-b51c-95de7a77e128"/> <!-- zzuf -->
+</authors>
+<contributors>
+    <contributor uuid="82cfa629-7bd2-4931-b2b9-2c4812f9b1ac" contribution="Idea"/> <!-- Drysu -->
+</contributors>
+<players max="16" colors="true"/>
+<time>2m</time>
+<kits>
+    <kit id="da-kit">
+        <item material="stone sword" unbreakable="true"/>
+        <item material="seeds"/>
+        <game-mode>adventure</game-mode>
+    </kit>
+</kits>
+<spawns>
+    <player-kit>
+        <attribute operation="add" amount="-0.4">scale</attribute>
+        <attribute operation="add" amount="-1">entity_interaction_range</attribute>
+    </player-kit>
+    <default yaw="0">
+        <region>
+            <point>1,78,-16</point>
+        </region>
+    </default>
+    <spawn spread="true" angle="1,68,0" kit="da-kit">
+        <region>
+            <cylinder base="1,67,0" height="0" radius="5"/>
+        </region>
+    </spawn>
+</spawns>
+<blitz/>
+<filters>
+    <pulse id="the-pulse" period="0.1" duration="0.05">
+        <match-running/>
+    </pulse>
+    <after id="spawn-time" duration="0.1">
+        <match-running/>
+    </after>
+    <after id="death-time" duration="1m40s">
+        <match-running/>
+    </after>
+    <material id="only-grass">grass block</material>
+    <material id="only-lava">lava</material>
+    <above id="above-64" y="64"/>
+    <apply block="deny(participating)" block-physics="deny(only-lava)"/>
+</filters>
+<variables>
+    <worldtime id="chicken_time"/>
+</variables>
+<regions>
+    <cuboid id="bedrock-spawn" min="22,55,21" max="-20,56,-21"/>
+    <cuboid id="lava-spawn" min="22,56,21" max="-20,58,-21"/>
+    <cylinder id="water-spawn" base="1,68,0" height="1" radius="3"/>
+    <cuboid id="air-spawn" min="7,67,-6" max="-5,68,6"/>
+    <cuboid id="mycel-spawn" min="7,66,-6" max="-5,67,6"/>
+</regions>
+<actions>
+    <trigger filter="spawn-time" scope="player">
+        <action id="spawn-chicken" scope="player" expose="true">
+            <execute command="minecraft:summon minecraft:chicken ~ ~ ~ {CustomName:'#player#',Invulnerable:1b}"/>
+            <execute command="minecraft:ride #player# mount @e[type=chicken,limit=1,name=#player#]"/>
+        </action>
+    </trigger>
+    <trigger filter="all(not(riding),above-64,match-running)" scope="player">
+        <action>
+            <execute command="execute as #player# unless entity @s[type=chicken] run ride @s mount @e[type=chicken,limit=1,name=#player#]"/>
+        </action>
+    </trigger>
+    <trigger filter="the-pulse" scope="player">
+        <action>
+            <execute command="execute as @e[type=chicken] at @s if score @s yPos matches ..61 run kill @s"/>
+        </action>
+    </trigger>
+    <trigger filter="death-time" scope="match">
+        <action>
+            <set var="chicken_time" value="18000"/>
+            <weather state="thunder"/>
+            <fill region="bedrock-spawn" material="bedrock" update="false"/>
+            <fill region="lava-spawn" material="lava" update="false"/>
+            <fill region="water-spawn" material="water"/>
+            <fill region="air-spawn" material="air"/>
+            <fill region="mycel-spawn" material="mycel" filter="only-grass"/>
+        </action>
+    </trigger>
+    <trigger scope="match">
+        <filter>
+            <match-finished/>
+        </filter>
+        <action>
+            <execute command="minecraft:kill @e[type=chicken]"/>
+        </action>
+    </trigger>
+</actions>
+<toolrepair>
+    <tool>stone sword</tool>
+</toolrepair>
+<lock-mounts>on</lock-mounts>
+<gamerules>
+    <doMobLoot>false</doMobLoot>
+</gamerules>
+<mobs>
+    <filter>
+        <spawn>COMMAND</spawn>
+    </filter>
+</mobs>
+</map>

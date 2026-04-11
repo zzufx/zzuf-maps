@@ -5,7 +5,7 @@ The majority of maps are CC BY-SA 4.0 licensed. Other maps can be CC BY-NC-SA 4.
 # Folders
 A description of each folder's contents
 
-### includes
+### `includes`
 This folder contains custom gamemode files I've made that are required by some of my maps (e.g.: Bridge maps need the [bridge.xml](https://github.com/zzufx/zzuf-maps/blob/master/includes/bridge.xml) include to work). Some gamemodes, like Bed Wars and Ghost Squadron, use include files that were only partially or not made by me, which you can find in [OvercastCommunity/PublicMaps](https://github.com/OvercastCommunity/PublicMaps/tree/main/includes).
 
 These files go into the includes folder defined in PGM's *config.yml*
@@ -16,7 +16,7 @@ These files go into the includes folder defined in PGM's *config.yml*
 
 * For more information on what **Bridge Swap** is and how to use [bridge-swap.xml](https://github.com/zzufx/zzuf-maps/blob/master/includes/bridge-swap.xml) visit [this link](https://zzufx.github.io/bridge_swap.html).
 
-### maps
+### `maps`
 This is a collection of maps I've worked on where I had complete or a large share of creative input. This folder contains maps for Minecraft versions 1.8 and 1.21, some maps having variants of themselves for both versions.
 
 The following maps can be found in this repo. All maps come with their XML configuration files. Maps with variants have the "main" map in **bold**.
@@ -68,5 +68,8 @@ The following maps can be found in this repo. All maps come with their XML confi
 | **Whac-A-Mole**<br>Whac-A-Mole: Bleak | Arcade |
 | Yonaguni | Bridge |
 
-### xml-only
+### `xml-only`
 This folder contains PGM XML files I've made for classic or miscellaneous Minecraft maps not made by me, such as Pizza Spleef by SethBling (released in 2013)
+
+### `cmp-fork-includes` and `cmp-fork-maps`
+These folders contain maps and includes that are only compatible with [Casual Modern PGM](https://zzufx.github.io/cmp.html)'s [PGM fork](https://github.com/CasualModernPGM/PGM), which contains extra features.

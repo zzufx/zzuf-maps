@@ -1,0 +1,134 @@
+<map proto="1.5.0"> <!-- Utilizes CMP fork features -->
+<!--
+      @        @
+   @              @
+  @                @
+ @                  @
+ @                  @
+ @                  @
+ @@                @@
+  @@      @@      @@
+   @@@    @@   @@@@
+      @@@@@@@@@@@
+          @@
+          @@
+          @@
+-->
+<!-- Quake gamemode include file -->
+<!-- Created by zzuf (GitHub @zzufx) -->
+<!-- Version 2025.02.24-3 -->
+<constants>
+    <constant id="map-mode" fallback="true" delete="true"/>
+    <if constant="map-mode" constant-comparison="defined delete">
+        <constant id="score-limit">6</constant> <!-- Duel mode, default -->
+    </if>
+    <if constant="map-mode" constant-value="large">
+        <constant id="score-limit">50</constant> <!-- Larger matches -->
+    </if>
+    <!-- Guns -->
+    <constant id="railgun-material">netherite hoe</constant>
+    <constant id="cmpgm-material">diamond hoe</constant>
+    <constant id="zzuffer-material">golden hoe</constant>
+    <constant id="looneygun-material">copper pickaxe</constant>
+    <constant id="stylus-material">iron hoe</constant>
+</constants>
+<quake>
+    <railgun material="${railgun-material}" beam-color="navy" spiral-color="white"/>
+    <railgun material="${cmpgm-material}" beam-color="green" spiral-color="lime"/>
+    <railgun material="${zzuffer-material}" beam-color="red" spiral-color="orange"/>
+    <railgun material="${looneygun-material}" beam-color="orange" spiral-color="black"/>
+    <railgun material="${stylus-material}" beam-color="fuchsia" spiral-color="yellow"/>
+</quake>
+<if constant="map-mode" constant-comparison="defined delete">
+    <game>Quake Duel</game>
+</if>
+<gamemode>quake</gamemode>
+<objective>Be the first one to get ${score-limit} kills!</objective>
+<kits>
+    <kit id="quakecraft-kit">
+        <kit id="gun-kit"/>
+        <effect duration="3s" amplifier="255" ambient="true">damage resistance</effect>
+        <game-mode>adventure</game-mode>
+    </kit>
+    <kit id="gun-kit">
+        <clear/>
+        <action id="give-weapon"/>
+        <item slot="8" unbreakable="true" material="knowledge book" name="`6Gun Selection" components="enchantment_glint_override=true" locked="true" consumable="gun-menu-action"/>
+    </kit>
+    <lend filter="all(crouching,participating)">
+        <kit>
+            <effect>glowing</effect>
+        </kit>
+    </lend>
+    <give kit="gun-kit" filter="all(current_weapon=0,participating)"/>
+    <give kit="gun-kit" filter="all(current_weapon=1,participating)"/>
+    <give kit="gun-kit" filter="all(current_weapon=2,participating)"/>
+    <give kit="gun-kit" filter="all(current_weapon=3,participating)"/>
+    <give kit="gun-kit" filter="all(current_weapon=4,participating)"/>
+</kits>
+<variables>
+    <variable id="current_weapon" default="0" scope="player"/>
+    <timelimit id="quake_tl"/>
+</variables>
+<actions>
+    <action id="give-weapon" scope="player">
+        <action filter="current_weapon=0">
+            <kit><item slot="0" unbreakable="true" material="${railgun-material}" name="`rRailgun" lore="`eLeft click `7to boost, `eRight click`7 to fire.|`8Obtained by running 'impulse 9' in Beyond." components="enchantment_glint_override=true" locked="true"/></kit>
+        </action>
+        <action filter="current_weapon=1">
+            <kit><item slot="0" unbreakable="true" material="${cmpgm-material}" name="`rCMPGM" lore="`eLeft click `7to boost, `eRight click`7 to fire.|`8Obtained by running 'impulse 9' in Beyond." components="enchantment_glint_override=true" locked="true"/></kit>
+        </action>
+        <action filter="current_weapon=2">
+            <kit><item slot="0" unbreakable="true" material="${zzuffer-material}" name="`rzzuffer" lore="`eLeft click `7to boost, `eRight click`7 to fire.|`8Obtained by running 'impulse 9' in Beyond." components="enchantment_glint_override=true" locked="true"/></kit>
+        </action>
+        <action filter="current_weapon=3">
+            <kit><item slot="0" unbreakable="true" material="${looneygun-material}" name="`rLooneygun" lore="`eLeft click `7to boost, `eRight click`7 to fire.|`8Obtained by running 'impulse 9' in Beyond." components="enchantment_glint_override=true" locked="true"/></kit>
+        </action>
+        <action filter="current_weapon=4">
+            <kit><item slot="0" unbreakable="true" material="${stylus-material}" name="`rStylus" lore="`eLeft click `7to boost, `eRight click`7 to fire.|`8Obtained by running 'impulse 9' in Beyond." components="enchantment_glint_override=true" locked="true"/></kit>
+        </action>
+        <sound/>
+    </action>
+    <action id="open-gun-menu" scope="player">
+        <open-shop shop="gun-menu"/>
+    </action>
+    <trigger scope="match">
+        <filter>
+            <after duration="4m">
+                <match-running/>
+            </after>
+        </filter>
+        <action>
+            <set var="quake_tl" value="120"/>
+        </action>
+    </trigger>
+</actions>
+<consumables>
+    <consumable id="gun-menu-action" action="open-gun-menu" on="right click" override="true" consume="false"/>
+</consumables>
+<shops>
+    <shop id="gun-menu" name="`eChoose your gun!">
+        <category id="main" name="`8zzuf Arms Co." material="eye of ender">
+            <item material="${railgun-material}" components="enchantment_glint_override=true" name="`rRailgun" amount="1" purchasable="false" click-action="current_weapon:=0" on-buy="close"/>
+            <item material="${cmpgm-material}" components="enchantment_glint_override=true" name="`rCMPGM" amount="1" purchasable="false" click-action="current_weapon:=1" on-buy="close"/>
+            <item material="${zzuffer-material}" components="enchantment_glint_override=true" name="`rzzuffer" amount="1" purchasable="false" click-action="current_weapon:=2" on-buy="close"/>
+            <item material="${looneygun-material}" components="enchantment_glint_override=true" name="`rFarmer" amount="1" purchasable="false" click-action="current_weapon:=3" on-buy="close"/>
+            <item material="${stylus-material}" components="enchantment_glint_override=true" name="`rStyler" amount="1" purchasable="false" click-action="current_weapon:=4" on-buy="close"/>
+        </category>
+    </shop>
+</shops>
+<respawn auto="true" delay="0"/>
+<regions>
+    <apply block="never"/>
+</regions>
+<score>
+    <kills>1</kills>
+    <limit>${score-limit}</limit>
+</score>
+<disabledamage>
+    <damage>fall</damage>
+</disabledamage>
+<hunger>
+    <depletion>off</depletion>
+</hunger>
+</map>
