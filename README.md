@@ -1,6 +1,8 @@
-**zzuf-maps** is a repository of Minecraft PvP maps created by [@zzufx](https://github.com/zzufx), for use with the [PvP Game Manager](https://github.com/PGMDev/PGM) plugin.
+**zzuf-maps** is a repository of Minecraft PvP maps created by [@zzufx](https://github.com/zzufx), for use with the [PvP Game Manager](https://github.com/CasualModernPGM/PGM) plugin.
 
-The majority of maps are CC BY-SA 4.0 licensed. Other maps can be CC BY-NC-SA 4.0 licensed. Each map has a LICENSE.txt file.
+As it has more powerful capabilities for mapmakers, the use of [CasualModernPGM's PGM fork](https://github.com/CasualModernPGM/PGM) is highly recommended. Maps in this repository are guaranteed to work on the `upstream` version of the plugin too though, unless stated otherwise (either via folder names or comments in the .xml file).
+
+Maps are either CC BY-SA 4.0 or CC BY-NC-SA 4.0 licensed. Each map has a LICENSE.txt file.
 
 # Folders
 A description of each folder's contents
@@ -31,6 +33,7 @@ The following maps can be found in this repo. All maps come with their XML confi
 | **BN: Dark Nebula**<br>Dark Nebula: Snowball RAGE<br>Dark Nebula: Arena | **Blasternauts TDM**<br>Snowball RAGE TDM<br>Quakecraft |
 | Beyond | One in the Quiver |
 | **Calima**<br>Calima: Lifesteal | **Item Sumo**<br>Item Sumo + Blitz: Lifesteal |
+| CHICKEN JOCKEY | Arcade | Requires [CasualModernPGM's PGM fork](https://github.com/CasualModernPGM/PGM) |
 | **Cordillera**<br>Cordillera: Elytra | **Double Bridge**<br>Double Bridge |
 | Dead End | Bridge |
 | **Deadwood**<br>Deadwood: Quickdraw | **One in the Quiver**<br>Guns TDM |
@@ -57,6 +60,7 @@ The following maps can be found in this repo. All maps come with their XML confi
 | Pizza Time | Arcade (Pizza Spleef) |
 | **Polynesia _(1.8 version)_**<br>Polynesia _(1.21 version)_<br>Polynesia: Trident RAGE | **One in the Quiver**<br>One in the Quiver<br>Trident RAGE FFA Deathmatch |
 | Potrzebie | TDM |
+| Radiant | Crystal PvP | Requires [CasualModernPGM's PGM fork](https://github.com/CasualModernPGM/PGM) |
 | **Random Items**<br>Random Items: BFP<br>Random Items: Upside Down<br>Random Items: Void<br> | **Arcade**<br>Arcade<br>Arcade<br>Arcade | 
 | **Rockaway Bridge**<br>Rockaway Ridge<br>Rockaway Fridge | Double Bridge<br>Double Bridge<br>Double Bridge | <br>Halloween variant<br>Christmas variant |
 | Sagojn | Bed Wars |
