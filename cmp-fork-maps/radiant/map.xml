@@ -1,4 +1,4 @@
-<map proto="1.5.0" min-server-version="1.21.11"> <!-- Utilizes CMP fork features - End Crystals are not tracked in upstream PGM -->
+<map proto="1.5.0" min-server-version="1.21.11">
 <name>Radiant</name>
 <version>1.0.2</version>
 <created>2026-02-14</created>
