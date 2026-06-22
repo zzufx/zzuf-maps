@@ -1,0 +1,384 @@
+<map proto="1.5.0">
+<name>From the Archives: Rockaway Bridge Redux</name>
+<slug>fta_rockaway_bridge</slug>
+<version>1.0.2</version>
+<objective>§kJump §kinto §kthe §kenemy §kteam's §kportal, §klocated §kbehind §ktheir §kspawn point!§r</objective>
+<created>1977-09-05</created> <!-- 2025-04-01 -->
+<include id="bridge"/>
+<constants>
+    <constant id="score-limit">7</constant>
+    <constant id="mercy-limit">5</constant>
+    <constant id="map-origin">0.5,0,0.5</constant>
+    <constant id="void-plane">1.5</constant>
+    <!-- Teams -->
+    <constant id="team-one-spawn">-55.5,21,0.5</constant>
+    <constant id="team-one-yaw">-90</constant>
+    <constant id="team-two-spawn">56.5,21,0.5</constant>
+    <constant id="team-two-yaw">90</constant>
+    <!-- Match -->
+    <constant id="overtime-default">1</constant>
+    <!-- Misc -->
+    <constant id="main-kit">pro-spawn-kit</constant>
+    <constant id="armor-kit">pro-armor-kit</constant>
+    <constant id="show-tutorial">0</constant>
+    <constant id="natural-regeneration">true</constant>
+</constants>
+<authors>
+    <author uuid="9d4779a8-d35f-45d2-b51c-95de7a77e128"/> <!-- zzuf -->
+</authors>
+<broadcasts>
+    <alert after="25m" filter="fta-overtime-disabled">`7If neither team has won by then, the match will end in `c`l5 minutes`7!</alert>
+    <alert after="28m" filter="fta-overtime-disabled">`7If neither team has won by then, the match will end in `c`l2 minutes`7!</alert>
+    <alert after="29m" filter="fta-overtime-disabled">`7If neither team has won by then, the match will end in `c`l1 minute`7!</alert>
+    <alert after="29m30s" filter="fta-overtime-disabled">`7If neither team has won by then, the match will end in `c`l30 seconds`7!</alert>
+    <alert after="29m50s" filter="fta-overtime-disabled">`7If neither team has won by then, the match will end in `4`l10 seconds`7!</alert>
+</broadcasts>
+<teams>
+    <team id="team-one" color="gold" max="26">Orange</team>
+    <team id="team-two" color="blue" max="26">Blue</team>
+</teams>
+<spawns>
+    <default>
+        <regions>
+            <point>0.5,25,-64.5</point>
+            <point yaw="180">0.5,25,65.5</point>
+        </regions>
+    </default>
+</spawns>
+<kits>
+    <kit id="pro-spawn-kit">
+        <item unbreakable="true" material="iron sword"/>
+        <item material="bow" unbreakable="true" lore="`e⚠ `cYou can only hold `f1`c arrow at a time!|`9ⓘ `7Get a new one `f3.5 seconds `7after shooting!"/>
+        <item unbreakable="true" material="diamond pickaxe"/>
+        <item unbreakable="true" material="diamond axe"/>
+        <item material="wood" amount="64" damage="2"/>
+        <item material="wood" amount="64" damage="2"/>
+        <item material="stained clay" team-color="true" amount="64"/>
+        <item material="golden apple" amount="3" consumable="bridge-apple" prevent-sharing="true" lore="`9ⓘ `7Instantly restores to `c${max-health} HP`7!|`9ⓘ `7Grants `eAbsorption`7 for `f1 minute`7!"/>
+        <effect duration="oo">invisibility</effect>
+        <effect duration="oo" amplifier="255">slow_digging</effect>
+        <effect duration="2s" amplifier="255">resistance</effect>
+    </kit>
+    <kit id="pro-armor-kit">
+        <helmet material="leather helmet" team-color="true" unbreakable="true"/>
+        <chestplate material="leather chestplate" team-color="true" unbreakable="true"/>
+        <leggings material="leather leggings" team-color="true" unbreakable="true"/>
+        <boots material="leather boots" team-color="true" unbreakable="true"/>
+    </kit>
+</kits>
+<filters>
+    <not id="block-list">
+        <material>diamond block</material>
+    </not>
+    <players max="0" id="0-players">
+        <region id="outside"/>
+    </players>
+    <players min="1" max="1" id="1-player">
+        <region id="outside"/>
+    </players>
+    <players min="2" max="2" id="2-players">
+        <region id="outside"/>
+    </players>
+    <players min="3" max="3" id="3-players">
+        <region id="outside"/>
+    </players>
+    <players min="4" id="4-players">
+        <region id="outside"/>
+    </players>
+    <after id="after-1p" duration="4s" filter="1-player"/>
+    <deny id="deny-use">
+        <any>
+            <material>jungle fence gate</material>
+            <material>hopper</material>
+            <material>chest</material>
+            <material>trapped chest</material>
+            <material>ender chest</material>
+            <material>dispenser</material>
+            <material>dropper</material>
+            <material>furnace</material>
+        </any>
+    </deny>
+    <after id="onesec" duration="1s" filter="alive"/>
+    <all id="only-iron">
+        <material>iron block</material>
+        <cause>world</cause>
+    </all>
+    <all id="after-28m">
+        <time>28m</time>
+        <variable id="fta-overtime-disabled" var="fta_overtime">0</variable>
+    </all>
+    <after duration="2m" filter="after-28m">
+        <message>`4» `fThe match will `cend`f in {0} `4«</message>
+        <!-- <message>{"translate":"misc.timeRemaining"}</message> -->
+    </after>
+</filters>
+<regions>
+    <negative id="not-buildable">
+        <complement>
+            <cuboid min="-74,5,52" max="75,35,-51"/>
+            <cuboid min="-1,10,-1" max="2,15,2"/> <!-- mid spawner -->
+            <region id="spawn-areas"/>
+            <region id="cages-full"/>
+            <rectangle id="pink-portal-zone" min="-60,-12" max="-83,13"/>
+            <mirror id="yellow-portal-zone" region="pink-portal-zone" origin="${map-origin}" normal="1,0,0"/>
+            <rectangle id="south-void" min="31,37" max="-30,53"/>
+            <mirror region="south-void" origin="${map-origin}" normal="0,0,1"/>
+        </complement>
+    </negative>
+    <!-- Portals -->
+    <cuboid id="team-one-portal" min="-71,7,-2" max="-65,8,3"/>
+    <mirror id="team-two-portal" region="team-one-portal" origin="${map-origin}" normal="1,0,0"/>
+    <union id="outside-portal">
+        <block id="team-one-outside-portal">-63,7,0</block>
+        <mirror region="team-one-outside-portal" origin="${map-origin}" normal="1,0,0"/>
+    </union>
+    <!-- Round cages -->
+    <union id="cages">
+        <complement id="team-one-spawn-cage">
+            <cuboid min="-59,21,-3" size="7,4,7"/>
+            <cuboid min="-58,21,-2" size="5,3,5"/>
+            <block>-59,24,2</block>
+            <block>-59,24,-2</block>
+        </complement>
+        <mirror region="team-one-spawn-cage" origin="${map-origin}" normal="1,0,0"/>
+    </union>
+    <!-- Rockaway Bridge -->
+    <apply use="deny-use" message="You may not interact with this block!"/>
+    <above y="40" id="ceiling"/>
+    <apply enter="never" region="ceiling" message="You may not climb higher!"/>
+    <cuboid id="outside" min="296,14,-100" max="309,20,-106"/>
+    <block id="torch1">298,18,-106</block>
+    <block id="torch2">306,18,-106</block>
+    <block id="torch3">306,18,-101</block>
+    <block id="torch4">298,18,-101</block>
+    <!-- FTA -->
+    <union id="spawn-areas">
+        <complement id="pink-spawn-area">
+            <rectangle min="-40,-12" max="-60,13"/>
+            <region id="cages-full"/>
+        </complement>
+        <complement id="blue-spawn-area">
+            <rectangle min="41,13" max="61,-12"/>
+            <region id="cages-full"/>
+        </complement>
+    </union>
+    <union id="cages-full">
+        <cuboid id="team-one-cage-full" min="-59,21,-3" size="7,4,7"/>
+        <mirror region="team-one-cage-full" origin="${map-origin}" normal="1,0,0"/>
+    </union>
+    <complement id="wilderness">
+        <everywhere/>
+        <region id="cages-full"/>
+        <region id="spawn-areas"/>
+        <region id="pink-portal-zone"/>
+        <region id="yellow-portal-zone"/>
+        <region id="outside"/>
+    </complement>
+    <point id="spawner">0.5,12.2,0.5</point>
+</regions>
+<variables>
+    <variable id="fta_overtime" scope="match" default="0"/>
+</variables>
+<actions>
+    <trigger scope="match">
+        <filter>
+            <all>
+                <!-- <time>30m</time> -->
+                <time>30m</time>
+                <filter id="fta-overtime-disabled"/>
+            </all>
+        </filter>
+        <action>
+            <set var="time_limit" value="0"/>
+        </action>
+    </trigger>
+    <!-- FTA -->
+    <action id="message-zone-wilderness" scope="player">
+        <message text=" `e~`2Wilderness"/>
+        <message title="`2`lWilderness" subtitle="`eIt's dangerous to go alone." fade-in="0.5" stay="1" fade-out="0.5"/>
+    </action>
+    <action id="message-zone-pink-from-yellow" scope="player">
+        <message text=" `e~`cOrange Portal Zone"/>
+        <message title="`c`lOrange Portal Zone" subtitle="`eEnter the portal!" fade-in="0.5" stay="1" fade-out="0.5"/>
+    </action>
+    <action id="message-zone-pink-from-pink" scope="player">
+        <message text=" `e~`aOrange Portal Zone"/>
+        <message title="`a`lOrange Portal Zone" subtitle="`eProtect the portal!" fade-in="0.5" stay="1" fade-out="0.5"/>
+    </action>
+    <action id="message-zone-yellow-from-pink" scope="player">
+        <message text=" `e~`cBlue Portal Zone"/>
+        <message title="`c`lBlue Portal Zone" subtitle="`eEnter the portal!" fade-in="0.5" stay="1" fade-out="0.5"/>
+    </action>
+    <action id="message-zone-yellow-from-yellow" scope="player">
+        <message text=" `e~`aBlue Portal Zone"/>
+        <message title="`a`lBlue Portal Zone" subtitle="`eProtect the portal!" fade-in="0.5" stay="1" fade-out="0.5"/>
+    </action>
+    <trigger action="message-zone-wilderness" filter="all(wilderness,onesec)" scope="player"/>
+    <trigger action="message-zone-yellow-from-pink" filter="all(yellow-portal-zone,team-one,onesec)" scope="player"/>
+    <trigger action="message-zone-yellow-from-yellow" filter="all(yellow-portal-zone,team-two,onesec)" scope="player"/>
+    <trigger action="message-zone-pink-from-pink" filter="all(pink-portal-zone,team-one,onesec)" scope="player"/>
+    <trigger action="message-zone-pink-from-yellow" filter="all(pink-portal-zone,team-two,onesec)" scope="player"/>
+    <action id="message-zone-spawn-pink-from-yellow" scope="player">
+        <message text=" `e~`cOrange Spawn Zone"/>
+        <message title="`c`lOrange Spawn Zone" subtitle="`eHome of the `6Orange `eteam." fade-in="0.5" stay="1" fade-out="0.5"/>
+    </action>
+    <action id="message-zone-spawn-pink-from-pink" scope="player">
+        <message text=" `e~`aOrange Spawn Zone"/>
+        <message title="`a`lOrange Spawn Zone" subtitle="`eWelcome to your `6Orange `ehome." fade-in="0.5" stay="1" fade-out="0.5"/>
+    </action>
+    <action id="message-zone-spawn-yellow-from-pink" scope="player">
+        <message text=" `e~`cBlue Spawn Zone"/>
+        <message title="`c`lBlue Spawn Zone" subtitle="`eHome of the `9Blue `eteam." fade-in="0.5" stay="1" fade-out="0.5"/>
+    </action>
+    <action id="message-zone-spawn-yellow-from-yellow" scope="player">
+        <message text=" `e~`aBlue Spawn Zone"/>
+        <message title="`a`lBlue Spawn Zone" subtitle="`eWelcome to your `9Blue `ehome." fade-in="0.5" stay="1" fade-out="0.5"/>
+    </action>
+    <action id="message-zone-outside" scope="player">
+        <message text=" `e~`eUnknown Area"/>
+        <message title="`e`lUnknown Area" subtitle="`e`kAll players welcome." fade-in="0.5" stay="1" fade-out="0.5"/>
+    </action>
+    <trigger action="message-zone-outside" filter="outside" scope="player"/>
+    <trigger action="message-zone-spawn-yellow-from-pink" filter="all(blue-spawn-area,team-one,onesec)" scope="player"/>
+    <trigger action="message-zone-spawn-yellow-from-yellow" filter="all(blue-spawn-area,team-two,onesec)" scope="player"/>
+    <trigger action="message-zone-spawn-pink-from-pink" filter="all(pink-spawn-area,team-one,onesec)" scope="player"/>
+    <trigger action="message-zone-spawn-pink-from-yellow" filter="all(pink-spawn-area,team-two,onesec)" scope="player"/>
+    <!-- end fta -->
+    <action id="o0" scope="match">
+        <fill region="torch1" material="air"/>
+        <fill region="torch2" material="air"/>
+        <fill region="torch3" material="air"/>
+        <fill region="torch4" material="air"/>
+    </action>
+    <action id="o1" scope="match">
+        <fill region="torch1" material="fire"/>
+        <fill region="torch2" material="air"/>
+        <fill region="torch3" material="air"/>
+        <fill region="torch4" material="air"/>
+    </action>
+    <action id="o2" scope="match">
+        <fill region="torch1" material="fire"/>
+        <fill region="torch2" material="fire"/>
+        <fill region="torch3" material="air"/>
+        <fill region="torch4" material="air"/>
+    </action>
+    <action id="o3" scope="match">
+        <fill region="torch1" material="fire"/>
+        <fill region="torch2" material="fire"/>
+        <fill region="torch3" material="fire"/>
+        <fill region="torch4" material="air"/>
+    </action>
+    <action id="o4" scope="match">
+        <fill region="torch1" material="fire"/>
+        <fill region="torch2" material="fire"/>
+        <fill region="torch3" material="fire"/>
+        <fill region="torch4" material="fire"/>
+        <message text="`f[`6Epsilon `e» `6Iota`f] `3zzuf `echanged servers"/>
+        <message text="`1Cycling to new map in `410`1 seconds!"/>
+    </action>
+    <trigger action="o0" filter="0-players" scope="match"/>
+    <trigger action="o1" filter="after-1p" scope="match"/>
+    <trigger action="o2" filter="2-players" scope="match"/>
+    <trigger action="o3" filter="3-players" scope="match"/>
+    <trigger action="o4" filter="4-players" scope="match"/>
+    <action id="clear-pro-spawn-kit" scope="player">
+        <replace-item ignore-metadata="true">
+            <find material="iron sword"/>
+            <replace material="air"/>
+        </replace-item>
+        <replace-item>
+            <find material="bow" unbreakable="true" lore="`e⚠ `cYou can only hold `f1`c arrow at a time!|`9ⓘ `7Get a new one `f3.5 seconds `7after shooting!"/>
+            <replace material="air"/>
+        </replace-item>
+        <replace-item ignore-metadata="true">
+            <find material="arrow"/>
+            <replace material="air"/>
+        </replace-item>
+        <replace-item ignore-metadata="true">
+            <find material="diamond pickaxe"/>
+            <replace material="air"/>
+        </replace-item>
+        <replace-item ignore-metadata="true">
+            <find material="stained clay"/>
+            <replace material="air"/>
+        </replace-item>
+        <replace-item ignore-metadata="true">
+            <find material="wood"/>
+            <replace material="air"/>
+        </replace-item>
+        <replace-item ignore-metadata="true">
+            <find material="diamond axe"/>
+            <replace material="air"/>
+        </replace-item>
+        <replace-item ignore-metadata="true">
+            <find material="golden apple"/>
+            <replace material="air"/>
+        </replace-item>
+        <replace-item ignore-metadata="true">
+            <find material="iron helmet"/>
+            <replace material="air"/>
+        </replace-item>
+        <replace-item ignore-metadata="true">
+            <find material="iron chestplate"/>
+            <replace material="air"/>
+        </replace-item>
+        <replace-item ignore-metadata="true">
+            <find material="iron leggings"/>
+            <replace material="air"/>
+        </replace-item>
+        <replace-item ignore-metadata="true">
+            <find material="iron boots"/>
+            <replace material="air"/>
+        </replace-item>
+        <replace-item ignore-metadata="true">
+            <find material="leather helmet"/>
+            <replace material="air"/>
+        </replace-item>
+    </action>
+</actions>
+<crafting>
+    <disable>boat</disable>
+    <disable>storage minecart</disable>
+    <disable>powered minecart</disable>
+    <disable>hopper minecart</disable>
+    <disable>ender chest</disable>
+</crafting>
+<itemremove>
+    <item>leather helmet</item>
+    <item>item frame</item>
+    <item>command minecart</item>
+</itemremove>
+<renewables>
+    <renewable renew-filter="only-iron" rate="1"/>
+</renewables>
+<portals>
+    <!-- Rockaway Bridge -->
+    <portal x="@297" y="@15" z="@-103" yaw="@-90" pitch="@0" region="outside-portal" sound="true" observers="never"/>
+</portals>
+<spawners>
+    <spawner spawn-region="spawner" player-region="everywhere" delay="30s">
+        <item material="monster egg" damage="50"/>
+    </spawner>
+    <spawner spawn-region="spawner" player-region="everywhere" delay="1m">
+        <item material="obsidian"/>
+    </spawner>
+    <spawner spawn-region="spawner" player-region="everywhere" delay="2m">
+        <item material="tnt"/>
+    </spawner>
+</spawners>
+<tnt>
+    <instantignite>on</instantignite>
+    <power>2</power>
+</tnt>
+<itemremove>
+    <item>yellow flower</item>
+    <item>diamond axe</item>
+    <item>red rose</item>
+    <item>seeds</item>
+    <item>double plant</item>
+    <item>sand</item>
+    <item>147</item>
+    <item>40</item>
+    <item>39</item>
+</itemremove>
+</map>

@@ -42,6 +42,7 @@ The following maps can be found in this repo. All maps come with their XML confi
 | Earthborn | RAGE Blitz |
 | Envisage | Bridge Swap (Bridge + Block Swap) |
 | **Erratic**<br>Erratic: Blitz<br>Erratic: Lifesteal | **Trident RAGE TDM**<br>Trident RAGE + Blitz<br>Trident RAGE + Blitz: Lifesteal |
+| From the Archives: Rockaway Bridge Redux | Edited Bridge | April Fools 2025 map | 
 | Fun House | TDM with size-shifting |
 | GHAST JOCKEY | Arcade |
 | GS: Beholder | Ghost Squadron |
